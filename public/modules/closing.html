@@ -1,0 +1,132 @@
+
+<strong>Closing Questionnaire</strong>
+<div id="closing">
+  <h5> <span id="status"></span> </h5>
+  <p id="demoinstr">
+  Almost done! Please answer a few more questions.
+  </p>
+
+  <br>
+  <div id="hardest">
+    <text id="hardestLabel" fill="red">Which type of question do you think was the <strong>most difficult</strong>?</text>
+    <div id="hardestValidate" class="validate" style="font-size: 150%; left: 10px; float: left;"></div>
+      <div id="hardestRadio">
+          <input type="radio" id="dh1" name="hardest" value="averages"> Estimate averages<br>
+          <input type="radio" id="dh2" name="hardest" value="comparison"> Compare values<br>
+          <input type="radio" id="dh3" name="hardest" value="outliers"> Outliers<br>
+          <input type="radio" id="dh4" name="hardest" value="trend"> Trend shape<br>
+          <input type="radio" id="dh5" name="hardest" value="dontknow"> Not sure<br>
+      </div>
+  </div>
+  <br>
+  <div id="easiest">
+    <text id="easiestLabel" fill="red">Which type of question do you think was the <strong>easiest</strong>?</text>
+    <div id="easiestValidate" class="validate" style="font-size: 150%; left: 10px; float: left;"></div>
+      <div id="easiestRadio">
+          <input type="radio" id="de1" name="easiest" value="averages"> Estimate averages<br>
+          <input type="radio" id="de2" name="easiest" value="comparison"> Compare values<br>
+          <input type="radio" id="de3" name="easiest" value="outliers"> Outliers<br>
+          <input type="radio" id="de4" name="easiest" value="trend"> Trend shape<br>
+          <input type="radio" id="de5" name="easiest" value="dontknow"> Not sure<br>
+      </div>
+  </div>
+  <br>
+  <div id="understand">
+    <text id="understandLabel" fill="red">Was there any type of question that you did <strong>NOT</strong> understand?</text>
+    <div id="understandValidate" class="validate" style="font-size: 150%; left: 10px; float: left;"></div>
+      <div id="understandCheck">
+          <input type="checkbox" id="duA" name="understand" value="averages"> Estimate averages<br>
+          <input type="checkbox" id="duC" name="understand" value="comparison"> Compare values<br>
+          <input type="checkbox" id="duO" name="understand" value="outliers"> Outliers<br>
+          <input type="checkbox" id="duS" name="understand" value="trend"> Trend shape<br>
+      </div>
+  </div>
+  <br>
+  <div id="comment2">
+    <text id="comment2Label" fill="red">Please write any comments you have about things that made the tasks more or less difficult.</text>
+    <div id="comment2Validate" class="validate" style="font-size: 150%; left: 10px; float: left;"></div>
+    <br>
+    <textarea rows="6" cols="80" class="textfield" value="" id="comment2Text" size="125" name="ageText"> </textarea>
+  </div>
+  <br>
+  <div id="comment1">
+    <text id="comment1Label" fill="red">Please write any comments you have about things that you found frustrating about the task or using the visualization.</text>
+    <div id="comment1Validate" class="validate" style="font-size: 150%; left: 10px; float: left;"></div>
+    <br>
+    <textarea rows="6" cols="80" class="textfield" value="" id="comment1Text" size="125" name="ageText"> </textarea>
+  </div>
+  <br>
+  <div id="comment3">
+    <text id="comment3Label" fill="red">Do you have any other comments about the tasks or study?</text>
+    <div id="comment3Validate" class="validate" style="font-size: 150%; left: 10px; float: left;"></div>
+    <br>
+    <textarea rows="6" cols="80" class="textfield" value="" id="comment3Text" size="125" name="ageText"> </textarea>
+  </div>
+  <br>
+
+  <br>
+  <button id="submitComments" class="next-button" type="button">Next</button>
+  <div id="validateMessage" class="validate"></div>
+<br>
+</div>
+
+<script> 
+
+  function isNumber(evt) {
+    evt = (evt) ? evt : window.event;
+    var charCode = (evt.which) ? evt.which : evt.keyCode;
+    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+        return false;
+    }
+    return true;
+  }
+
+
+(function() {
+  var jiggleDistance = 5;
+  var jiggleSpeed = 5;
+  var data = {};
+
+  experimentr.hideNext();
+
+  experimentr.startTimer('demo');
+
+  var hardestRadio = d3.select('#hardest');
+  var easiestRadio = d3.select('#easiest');
+  var understandCheck = d3.select('#understand');
+
+
+  d3.selectAll('input')
+    .filter(function(d) { return this.name === 'hardest' ? this : null; })
+    .on('change', function() { data.hardest = this.value; });
+
+  d3.selectAll('input')
+    .filter(function(d) { return this.name === 'easiest' ? this : null; })
+    .on('change', function() { data.easiest = this.value; });
+
+  function validate() {
+    experimentr.endTimer('demo');
+    data.commentFrustration = document.getElementById('comment1Text').value;
+    data.commentTaskDifficult = document.getElementById('comment2Text').value;
+    data.commentAnything = document.getElementById('comment3Text').value;
+
+    data.noUnderstandA = document.getElementById("duA").checked;
+    data.noUnderstandC = document.getElementById("duC").checked;
+    data.noUnderstandO = document.getElementById("duO").checked;
+    data.noUnderstandS = document.getElementById("duS").checked;
+    
+    data.isComplete = "Yes";
+
+    experimentr.addData(data);
+    
+    //experimentr.release();
+    experimentr.next();
+  }//end validate
+
+  d3.select('#submitComments')
+    .on('click', function () {
+      validate();
+    });
+  
+}());
+</script>

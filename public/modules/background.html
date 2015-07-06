@@ -1,0 +1,197 @@
+
+<strong>Background Questionnaire</strong>
+<div id="demographics">
+  <h5> <span id="status"></span> </h5>
+  <p id="demoinstr">
+  First, please fill out the following form before we begin.
+  </p>
+
+  <div id="age">
+    <text id="ageLabel" fill="red">Your age:</text>
+    <input type="text" class="textfield" value="" id="ageText" size="3" maxlength="2" name="ageText" onkeypress="return isNumber(event)" />
+    <div id="ageValidate" class="validate" style="font-size: 150%; left: 10px; float: left;"></div>
+  </div>
+  <br>
+  <div id="gender">
+      <text id="genderLabel" fill="red">Your gender:</text>
+      <div id="genderValidate" class="validate" style="font-size: 150%; left: 10px; float: left;"></div>
+      <div id="genderRadio">
+          <input type="radio" id="s1" name="gender" value="Male"> Male
+          <input type="radio" id="s2" name="gender" value="Female"> Female
+          <input type="radio" id="s3" name="gender" value="Unspecified"> Unspecified
+      </div>
+  </div>
+  <br>
+  <div id="degree">
+    <text id="degreeLabel" fill="red">Your degree:</text>
+    <div id="degreeValidate" class="validate" style="font-size: 150%; left: 10px; float: left;"></div>
+      <div id="degreeRadio">
+          <input type="radio" id="d1" name="degree" value="High School"> High School
+          <input type="radio" id="d2" name="degree" value="Bachelors"> Bachelors
+          <input type="radio" id="d3" name="degree" value="Masters"> Masters
+          <input type="radio" id="d4" name="degree" value="PhD"> PhD
+          <input type="radio" id="d5" name="degree" value="Other"> Other
+      </div>
+  </div>
+  <br>
+  <div id="major">
+    <text id="majorLabel" fill="red">Academic major, area of specialization, or occupation:</text>
+    <div id="majorValidate" class="validate" style="font-size: 150%; left: 10px; float: left;"></div>
+    <br>
+    <input type="text" class="textfield" value="" id="majorText" size="50" maxlength="50" name="ageText" />
+  </div>
+  <br>
+  <div id="monitor">Which approximate <strong>size</strong> is closest to the screen size you are using for this study? It's OK to guess.
+      <div id="monitorRadio">
+          <input type="radio" id="m4" name="monitor" value="size1"> iPad or smaller<br>
+          <input type="radio" id="m4" name="monitor" value="size2"> about the size of a sheet of notebook paper<br>
+          <input type="radio" id="m4" name="monitor" value="size3"> a little bigger than a sheet of notebook paper<br>
+          <input type="radio" id="m4" name="monitor" value="size4"> about the size of an open notebook (both pages open)<br>
+          <input type="radio" id="m4" name="monitor" value="size5"> bigger than an open notebook (both pages open)<br>
+          <input type="radio" id="m5" name="monitor" value="dontknow"> I'm not sure
+      </div>
+  </div>
+  <br>
+  <br>
+  <button id="submitComments" class="next-button" type="button">Next</button>
+  <div id="validateMessage" class="validate"></div>
+<br>
+</div>
+
+<script> 
+
+  //d3.select('#consent').remove();
+  function isNumber(evt) {
+    evt = (evt) ? evt : window.event;
+    var charCode = (evt.which) ? evt.which : evt.keyCode;
+    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+        return false;
+    }
+    return true;
+  }
+
+  function goFlashy(d3obj) {
+
+    for (var i = 0; i < 80; i++) {
+      
+      d3obj.style("color", "green")
+        .transition()
+          .style("color", "red")
+        .transition()
+          .style("color", "green")
+        .transition()
+          .style("color", "red")
+        .transition()
+          .style("color", "green")
+        .transition()
+          .style("color", "red")
+        .transition()
+          .style("color", "green")
+        .transition()
+          .style("color", "red")
+        .transition()
+          .style("color", "green")
+        .transition()
+          .style("color", "red")
+        .transition()
+          .style("color", "black");
+      }
+  }
+
+
+(function() {
+  var jiggleDistance = 5;
+  var jiggleSpeed = 5;
+  var data = {};
+
+  experimentr.hideNext();
+
+  experimentr.startTimer('demo');
+
+  var ageText = d3.select('#ageText');
+  var majorText = d3.select('#majorText');
+
+  var degreeRadio = d3.select('#degree');
+  var genderRadio = d3.select('#genderRadio');
+
+  d3.selectAll('input')
+    .filter(function(d) { return this.name === 'age' ? this : null; })
+    .on('change', function() { data.age = this.value; });
+
+  d3.selectAll('input')
+    .filter(function(d) { return this.name === 'gender' ? this : null; })
+    .on('change', function() { data.gender = this.value; });
+
+  d3.selectAll('input')
+    .filter(function(d) { return this.name === 'degree' ? this : null; })
+    .on('change', function() { data.degree = this.value; });
+  
+  d3.selectAll('input')
+  .filter(function(d) { return this.name === 'monitor' ? this : null; })
+  .on('change', function() { data.monitor = this.value; });
+
+  function goToNext() {
+    experimentr.endTimer('demo');
+    experimentr.addData(data);
+    //experimentr.release();
+    experimentr.next();
+  }  
+
+  function validate() {
+
+    data.age = ageText.property('value');
+    data.major = majorText.property('value');
+    
+    var messageThing = d3.select('#validateMessage');
+    var messageText = "";
+    messageThing.html("");
+    
+    if (data.age) {
+      d3.select('#ageValidate').text("");
+    }
+    else {
+      d3.select('#ageValidate').text("* ");
+      messageText += "<p>* Please provide your age.</p>"
+    }
+
+    if (data.major) {
+      d3.select('#majorValidate').text("");
+    }
+    else {
+      d3.select('#majorValidate').text("* ");
+      messageText += "<p>* Please provide your major, specialization, or occupation.</p>"
+    }
+
+
+    if (data.degree) {
+      d3.select('#degreeValidate').text("");
+    }
+    else {
+      d3.select('#degreeValidate').text("* ");
+      messageText += "<p>* Please select your education/degree information.</p>"
+    }
+
+    if (data.gender) {
+      d3.select('#genderValidate').text("");
+    }
+    else {
+      d3.select('#genderValidate').text("* ");
+      messageText += "<p>* Please select your gender.</p>"
+    }
+
+    if(data.age && data.gender && data.degree && data.major) {
+      //d3.select('#submitComments').attr('disabled', null);
+      goToNext();
+    }
+    else {
+      messageThing.html(messageText);
+    }
+  }//end validate
+
+  d3.select('#submitComments')
+    .on('click', function () {
+      validate();
+    });
+  
+}());
+</script>
