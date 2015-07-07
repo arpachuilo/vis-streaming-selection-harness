@@ -2,7 +2,11 @@ function FreezeTrajectory(selection, manualFreeze) {
 	//Hold previous mouse points for dynamic data
 	var prevMousePt = [0, 0];
 	var extMousePt = [0, 0];
+
+	//Store previous mouse point positions
 	var pts = [[]];
+
+	//Store values of points used creating trajectory visual
 	var ox = 0, oy = 0
 		lx1 = 0, ly1 = 0,
 		lx2 = 0, ly2 = 0,
@@ -25,48 +29,57 @@ function FreezeTrajectory(selection, manualFreeze) {
 	//If manual is true then freeze will only happen on shift
 	var manualFrz = (typeof manualFreeze === 'undefined') ? false : manualFreeze;;
 
-	//Create cursor
-	var svg = selection;
-	var gCopies = svg.insert("g", ".chart").attr("class", "snapshots");
-	var gSelection = svg.insert("g", ":first-child").attr("class", "freeze selector");
+	//Element that contains the 'snapshots' of frozen data
+	var gCopies = selection.insert("g", ".chart").attr("class", "snapshots");
+
+	//Element that contains the freeze region
+	var gSelection = selection.insert("g", ":first-child").attr("class", "freeze selector");
+
+	//Create freeze region visual
 	var freezeRegion = gSelection.append("polyline")
 		.attr("class", "freezeRegion")
 		.attr("points", "0,0 0,0 0,0");
 
-	//Create clipping for cursor selector
-	var clip = svg.select("defs")
+	//Create clipping for freeze region
+	var clip = selection.select("defs")
 		.append("clipPath")
 			.attr("id", "freezeClip")
 		.append("path");
 
-	//Create manual frozen region element if set
+	//Create manual freeze region visual if applicable
 	if (manualFrz) {
 		var manualFreezeRegion = gSelection.append("polyline")
 			.attr("class", "manual freezeRegion")
 			.attr("points", "0,0 0,0 0,0");
 	}
 
-	//Set on mousemove functionality
-	svg.on("mousemove.freezeSelector", function(d,i) {
+	//Redraw freeze region on mousemove
+	selection.on("mousemove.freezeSelector", function(d,i) {
 		FreezeTrajectory.redraw(d3.mouse(this));
 	});
 
-	//Set activator for freeze
+	//Set activator for manual freeze (shift key)
 	if (manualFrz) {
 		d3.select("body")
 			.on("keydown.freezeSelector", function() {
 				if (d3.event.shiftKey) {
-					d3.selectAll(targets).attr("id", "untagged");
-					d3.selectAll(".snapshot").remove();
 					mousePt = d3.mouse(this);
+
+					//Update location of manual freeze region
 					manualFreezeRegion
 						.attr("points", ox + "," + oy + " " +
 										lx1 + "," + ly1 + " " +
 										lx2 + "," + ly2);
+
+					//Update location of its clip
 					FreezeTrajectory.drawClipPath();
-					//Only delete snapshots outside of cursor window
+
+					//Clean and untag current snapshots
+					d3.selectAll(targets).attr("id", "untagged");
+					d3.selectAll(".snapshot").remove();
 					FreezeTrajectory.cleanSnapshots([ox, oy], [lx1, ly1], [lx2, ly2], mousePt);
-					//Copy-Pause points within cursor
+
+					//Create new snapshots inside freeze region
 					FreezeTrajectory.createSnapshots([ox, oy], [lx1, ly1], [lx2, ly2]);
 				}
 			});
@@ -85,6 +98,7 @@ function FreezeTrajectory(selection, manualFreeze) {
 			x2 = mousePt[0];
 			y2 = mousePt[1];
 
+			//Store previous mouse points and interpolate line over those points
 			if (i == threshold && j % 4 == 0) {
 				j = 0;
 				pts.push(mousePt);
@@ -114,20 +128,22 @@ function FreezeTrajectory(selection, manualFreeze) {
 		}
 
 		extMousePt = mousePt;
+
 		//Compute points to draw
 		FreezeTrajectory.computeTrajectory();
 
-		//Update location of cursor
+		//Update location of freeze region
+		FreezeTrajectory.drawCursor();
+
+		//Update location of its clip
 		if (!manualFrz)
 			FreezeTrajectory.drawClipPath();
 
-		FreezeTrajectory.drawCursor();
-
-		//Copy-Pause points within cursor
+		//Freeze points within cursor by creating snapshots
 		if (!manualFrz)
 			FreezeTrajectory.createSnapshots([ox, oy], [lx1, ly1], [lx2, ly2]);
 
-		//Only delete snapshots outside of cursor window
+		//Delete snapshots outside of freeze region
 		if (!manualFrz)
 			FreezeTrajectory.cleanSnapshots([ox, oy], [lx1, ly1], [lx2, ly2], mousePt);
 	};
@@ -140,8 +156,8 @@ function FreezeTrajectory(selection, manualFreeze) {
 
 		//Scale points to extend 'flashlight'
 		var dist = distance([x1, y1], [x2, y2]);
-		var width = +svg.style("width").slice(0, -2);
-		var height = +svg.style("height").slice(0, -2);
+		var width = +selection.style("width").slice(0, -2);
+		var height = +selection.style("height").slice(0, -2);
 		var length = Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2));
 		x2 = x2 + (x2 - x1) / dist * length;
 		y2 = y2 + (y2 - y1) / dist * length;
@@ -172,7 +188,7 @@ function FreezeTrajectory(selection, manualFreeze) {
 		}
 	};
 
-	//Set clip path to be inside the trajectory
+	//Set clip path of freeze region
 	FreezeTrajectory.drawClipPath = function() {
 		if (isFinite(ox + oy + lx1 + lx2 + ly1 + ly2)) {
 			clip
@@ -248,6 +264,7 @@ function FreezeTrajectory(selection, manualFreeze) {
 	}
 }
 
+//Interpolate points based on a catmull rom spline
 function catmullRomSpline2D(arr, t) {
 	p0 = arr[0];
 	p1 = arr[1];
@@ -270,7 +287,7 @@ function distance(ptA, ptB) {
 	return Math.sqrt(diff[0] * diff[0] + diff[1] * diff[1]);
 }
 
-//Find if point (C) is on/left/right of line formed by point (A,B)
+//Simple determinant function
 function det(ptA, ptB, ptC) {
 	return ((ptB[0] - ptA[0]) * (ptC[1] - ptA[1]) - (ptB[1] - ptA[1]) * (ptC[0] - ptA[0]));
 }

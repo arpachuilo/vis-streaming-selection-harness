@@ -8,39 +8,39 @@ function FreezeAroundCursor(selection, manualFreeze) {
 	//NOTE: Don't combine manual with accumulations... it doesn't work.
 	//Controls accumulation behavior near freeze region
 	var accumulations = false;
+
 	//If manual is true then freeze will only happen on shift
 	var manualFrz = (typeof manualFreeze === 'undefined') ? false : manualFreeze;
 
-	//Grab svg width/height
-	var svg = selection;
-	var width = +svg.style("width").slice(0, -2);
-	var height = +svg.style("height").slice(0, -2);
+	//Element that contains the 'snapshots' of frozen data
+	var gCopies = selection.insert("g", ".chart").attr("class", "snapshots");
 
-	//Create cursor
-	var width = +svg.style("width").slice(0, -2);
-	var height = +svg.style("height").slice(0, -2);
-	var gCopies = svg.insert("g", ".chart").attr("class", "snapshots");
-	var gSelection = svg.insert("g", ":first-child").attr("class", "freeze selector");
+	//Element that contains the freeze region
+	var gSelection = selection.insert("g", ":first-child").attr("class", "freeze selector");
 
-	//Freeze radius
+	//Freeze radius is based off the golden ratio ^4th of the chart size
+	var width = +selection.style("width").slice(0, -2);
+	var height = +selection.style("height").slice(0, -2);
 	var ratio = Math.pow((1 + Math.sqrt(5) / 2), 4);
 	var frzRadius = Math.sqrt((width * height) / (ratio * Math.PI));
 
+	//Create freeze region visual
 	var freezeRegion = gSelection.append("circle")
 		.attr("class","freezeRegion")
 		.attr("cx", 0)
 		.attr("cy", 0)
 		.attr("r", frzRadius);
 
-	//Create manual frozen region element if set
 	if(manualFrz) {
+		//Create manual freeze region visual if applicable
 		var manualFreezeRegion = gSelection.append("circle")
 			.attr("class","manual freezeRegion")
 			.attr("cx", 0)
 			.attr("cy", 0)
 			.attr("r", 0);
 
-		var clip = svg.select("defs")
+		//Create clip for manual freeze region
+		var clip = selection.select("defs")
 			.append("clipPath")
 				.attr("id", "freezeClip")
 			.append("circle")
@@ -50,9 +50,9 @@ function FreezeAroundCursor(selection, manualFreeze) {
 				.attr("r", frzRadius);
 	}
 
-	//Set on mousemove functionality
 	if (!manualFrz) {
-		svg.on("mousemove.freezeSelector", function(d,i) {
+		//Redraw freeze region and update frozen elements on mouse move
+		selection.on("mousemove.freezeSelector", function(d,i) {
 			freezeRegion
 				.attr("cx",0)
 				.attr("cy",0)
@@ -60,7 +60,8 @@ function FreezeAroundCursor(selection, manualFreeze) {
 			FreezeAroundCursor.redraw(d3.mouse(this));
 		});
 	} else {
-		svg.on("mousemove.freezeSelector", function(d,i) {
+		//Redraw freeze region on mousemove; store mouse location
+		selection.on("mousemove.freezeSelector", function(d,i) {
 			var mouse = d3.mouse(this);
 			freezeRegion
 				.attr("cx",mouse[0])
@@ -70,26 +71,33 @@ function FreezeAroundCursor(selection, manualFreeze) {
 		});
 	}
 
-	//Set activator for freeze
+	//Set activator for manual freeze (shift key)
 	if (manualFrz) {
 		d3.select("body")
 		.on("keydown.freezeSelector", function() {
 			if (d3.event.shiftKey) {
-				d3.selectAll(targets).attr("id", "untagged");
-				d3.selectAll(".snapshot").remove();
 				var mouse = prevMousePt;
+
+				//Update location of manual freeze region
 				manualFreezeRegion
 						.attr("cx",mouse[0])
 						.attr("cy",mouse[1])
 						.attr("r",frzRadius);
+
+				//Update location of its clip
 				clip
 					.attr("cx",mouse[0])
 					.attr("cy",mouse[1]);
+
+				//Clean then create snapshots inside freeze region
+				d3.selectAll(targets).attr("id", "untagged");
+				d3.selectAll(".snapshot").remove();
 				FreezeAroundCursor.cleanSnapshots(mouse);
 				FreezeAroundCursor.createSnapshots(mouse);
 			}
 		});
 	}
+
 	//Update freeze selector
 	FreezeAroundCursor.redraw = function(mouse) {
 		var mousePt;
@@ -103,13 +111,13 @@ function FreezeAroundCursor(selection, manualFreeze) {
 
 		prevMousePt = mousePt;
 
-		//Update location of cursor
+		//Update location of freeze region
 		FreezeAroundCursor.drawCursor(mousePt);
 
-		//Copy-Pause points within cursor
+		//Freeze points within cursor by creating snapshots
 		FreezeAroundCursor.createSnapshots(mousePt);
 
-		//Only delete snapshots outside of cursor window
+		//Delete snapshots outside of freeze region
 		FreezeAroundCursor.cleanSnapshots(mousePt);
 	};
 

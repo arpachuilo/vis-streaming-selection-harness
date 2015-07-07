@@ -2,12 +2,10 @@ function FreezeWholeScreen(selection) {
 	//Name of svg element to grab for targets
 	var targets = ".point"
 
-	//Create cursor
-	var svg = selection;
-	var gCopies = svg.insert("g", ".chart").attr("class", "snapshots");
-	var gSelection = svg.insert("g", ":first-child").attr("class", "freeze selector");
+	//Element that contains the 'snapshots' of frozen data
+	var gCopies = selection.insert("g", ".chart").attr("class", "snapshots");
 
-	//Set activator for freeze
+	//Freeze when user hits shift
 	d3.select("body")
 		.on("keydown.freezeSelector", function() {
 			if (d3.event.shiftKey) {
@@ -15,14 +13,13 @@ function FreezeWholeScreen(selection) {
 			}
 		});
 
-
-	//Update Selector
+	//Freezes all the data points currently shown
 	FreezeWholeScreen.freeze = function() {
 		FreezeWholeScreen.cleanSnapshots();
 		FreezeWholeScreen.createSnapshots();
 	};
 
-	//Create snapshots inside of freeze region
+	//Create snapshots of data points inside the freeze region
 	FreezeWholeScreen.createSnapshots = function() {
 		var points = d3.selectAll(targets);
 		points
@@ -42,7 +39,7 @@ function FreezeWholeScreen(selection) {
 			});
 	};
 
-	//Destroy snapshots outside of freeze region
+	//Destroy all snapshots
 	FreezeWholeScreen.cleanSnapshots = function(currPt) {
 		d3.selectAll(targets).attr("id", "untagged");
 		d3.selectAll(".snapshot").remove();

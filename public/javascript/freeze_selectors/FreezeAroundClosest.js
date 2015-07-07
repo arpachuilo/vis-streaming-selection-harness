@@ -6,7 +6,6 @@ function FreezeAroundClosest(selection, manualFreeze) {
 	//Name of svg element to grab for targets
 	var targets = ".point"
 
-
 	//Controls accumulation behavior near freeze region
 	var accumulations = false;
 	var swap = false;
@@ -14,34 +13,35 @@ function FreezeAroundClosest(selection, manualFreeze) {
 	//If manual is true then freeze will only happen on shift
 	var manualFrz = (typeof manualFreeze === 'undefined') ? false : manualFreeze;
 
-	//Grab svg width/height
-	var svg = selection;
-	var width = +svg.style("width").slice(0, -2);
-	var height = +svg.style("height").slice(0, -2);
+	//Element that contains the 'snapshots' of frozen data
+	var gCopies = selection.insert("g", ".chart").attr("class", "snapshots");
 
-	//Create cursor
-	var gCopies = svg.insert("g", ".chart").attr("class", "snapshots");
-	var gSelection = svg.insert("g", ":first-child").attr("class", "freeze selector");
+	//Element that contains the freeze region
+	var gSelection = selection.insert("g", ":first-child").attr("class", "freeze selector");
 
-	//Freeze radius
+	//Freeze radius is based off the golden ratio ^4th of the chart size
+	var width = +selection.style("width").slice(0, -2);
+	var height = +selection.style("height").slice(0, -2);
 	var ratio = Math.pow((1 + Math.sqrt(5) / 2), 4);
 	var frzRadius = Math.sqrt((width * height) / (ratio * Math.PI));
 
-	//Create cursor morph
+	//Create freeze region visual
 	var freezeRegion = gSelection.append("circle")
 		.attr("class","freezeRegion")
 		.attr("cx",0)
 		.attr("cy",0)
 		.attr("r",0);
 
-	//Create manual frozen region element if set
 	if(manualFrz) {
+		//Create manual freeze region visual if applicable
 		var manualFreezeRegion = gSelection.append("circle")
 			.attr("class","manual freezeRegion")
 			.attr("cx", 0)
 			.attr("cy", 0)
 			.attr("r", 0);
-		var clip = svg.select("defs")
+
+		//Create clip for manual freeze region
+		var clip = selection.select("defs")
 			.append("clipPath")
 				.attr("id", "freezeClip")
 			.append("circle")
@@ -51,12 +51,12 @@ function FreezeAroundClosest(selection, manualFreeze) {
 				.attr("r", frzRadius);
 	}
 
-	//Set on mousemove functionality
-	svg.on("mousemove.freezeSelector", function(d,i) {
+	//Redraw freeze region on mousemove
+	selection.on("mousemove.freezeSelector", function(d,i) {
 		FreezeAroundClosest.redraw(d3.mouse(this));
 	});
 
-	//Set activator for freeze
+	//Set activator for manual freeze (shift key)
 	if (manualFrz) {
 		d3.select("body")
 		.on("keydown.freezeSelector", function() {
@@ -66,21 +66,29 @@ function FreezeAroundClosest(selection, manualFreeze) {
 				var mouse = prevMousePt;
 				var target = FreezeAroundClosest.findClosest(mouse);
 				var currPt = [target.attr("cx"), target.attr("cy")];
-				FreezeAroundClosest.cleanSnapshots(currPt);
-				d3.selectAll(".point").attr("id", "untagged");
-				FreezeAroundClosest.createSnapshots(currPt, target);
+
+				//Update location of manual freeze region
 				manualFreezeRegion
 						.attr("cx", currPt[0])
 						.attr("cy", currPt[1])
 						.attr("r", frzRadius);
+
+				//Update location of its clip
 				clip
 					.attr("cx",currPt[0])
 					.attr("cy",currPt[1]);
+
+				//Clean and untag current snapshots
+				FreezeAroundClosest.cleanSnapshots(currPt);
+				d3.selectAll(".point").attr("id", "untagged");
+
+				//Create new snapshots inside freeze region
+				FreezeAroundClosest.createSnapshots(currPt, target);
 			}
 		});
 	}
 
-	//Update Selector
+	//Update freeze selector
 	FreezeAroundClosest.redraw = function(mouse) {
 		var target;
 		var mousePt;
@@ -157,7 +165,8 @@ function FreezeAroundClosest(selection, manualFreeze) {
 
 	//Update position of freeze region
 	FreezeAroundClosest.drawCursor = function(currPt) {
-		freezeRegion.transition().duration(50)
+		//NOTE: This is no good on node server; great on python server?????
+		freezeRegion.transition().duration(25).ease("linear")
 			.attr("cx", currPt[0])
 			.attr("cy", currPt[1])
 			.attr("r", frzRadius);

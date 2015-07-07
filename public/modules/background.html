@@ -58,7 +58,7 @@
 <br>
 </div>
 
-<script> 
+<script>
 
   //d3.select('#consent').remove();
   function isNumber(evt) {
@@ -73,7 +73,7 @@
   function goFlashy(d3obj) {
 
     for (var i = 0; i < 80; i++) {
-      
+
       d3obj.style("color", "green")
         .transition()
           .style("color", "red")
@@ -125,7 +125,7 @@
   d3.selectAll('input')
     .filter(function(d) { return this.name === 'degree' ? this : null; })
     .on('change', function() { data.degree = this.value; });
-  
+
   d3.selectAll('input')
   .filter(function(d) { return this.name === 'monitor' ? this : null; })
   .on('change', function() { data.monitor = this.value; });
@@ -135,17 +135,17 @@
     experimentr.addData(data);
     //experimentr.release();
     experimentr.next();
-  }  
+  }
 
   function validate() {
 
     data.age = ageText.property('value');
     data.major = majorText.property('value');
-    
+
     var messageThing = d3.select('#validateMessage');
     var messageText = "";
     messageThing.html("");
-    
+
     if (data.age) {
       d3.select('#ageValidate').text("");
     }
@@ -192,6 +192,5 @@
     .on('click', function () {
       validate();
     });
-  
 }());
 </script>

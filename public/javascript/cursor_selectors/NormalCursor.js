@@ -8,12 +8,13 @@ function NormalCursor(selection) {
 	//Used to extend radius for selecting target
 	var tolerance = 0;
 
-	//Set on mousemove functionality
+	//Redraw cursor on mouse move
 	var svg = selection;
 	svg.on("mousemove.cursorSelector", function(d,i) {
 		var target = NormalCursor.redraw(d3.mouse(this));
 	});
 
+	//Update position of cursor and obtain target
 	NormalCursor.redraw = function(mouse) {
 		var points = d3.selectAll(targets);
 		var target = null;
@@ -25,7 +26,7 @@ function NormalCursor(selection) {
 			mousePt = [mouse[0], mouse[1]];
 			prevMousePt = mousePt;
 		}
-		
+
 		var currMin = 0;
 		var currX, currY, currRad;
 		var Dist = [],
@@ -56,7 +57,7 @@ function NormalCursor(selection) {
 			target
 				.attr("class", target.attr("class") + " target");
 		}
-		
+
 		return target;
 	};
 

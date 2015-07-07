@@ -5,10 +5,10 @@ function BubbleCursor(selection) {
 	//Name of svg element to grab for targets
 	var targets = ".point"
 
-	//Create cursor
-	var svg = selection;
-	var gSelection = svg.insert("g", ":first-child").attr("class", "cursor selector");
+	//Element containg cursor visual
+	var gSelection = selection.insert("g", ":first-child").attr("class", "cursor selector");
 
+	//Create cursor
 	var cursor = gSelection.append("circle")
 		.attr("class","bubble cursor")
 		.attr("cx",0)
@@ -22,13 +22,13 @@ function BubbleCursor(selection) {
 		.attr("cy",0)
 		.attr("r",0);
 
-	//Set on mousemove functionality
-	svg.on("mousemove.cursorSelector", function(d,i) {
+	//Redraw on mouse move
+	selection.on("mousemove.cursorSelector", function(d,i) {
 		BubbleCursor.redraw(d3.mouse(this));
 	});
 
-	//Hide mouse when outside svg selection
-	svg.on("mouseout.cursorSelector", function(d, i) {
+	//Hide mouse when outside selection selection
+	selection.on("mouseout.cursorSelector", function(d, i) {
 		d3.select(".cursor")
 			.attr("cx",0)
 			.attr("cy",0)
@@ -42,7 +42,7 @@ function BubbleCursor(selection) {
 
 	//Draws bubble cursor
 	//If data is dynamic this call must be made in a loop
-	//Returns target obtained from bubble cursor as well
+	//Sets target obtained from cursor as well
 	BubbleCursor.redraw = function(mouse) {
 		var points = d3.selectAll(targets);
 		var target = null;
@@ -54,7 +54,7 @@ function BubbleCursor(selection) {
 			mousePt = [mouse[0], mouse[1]];
 			prevMousePt = mousePt;
 		}
-		
+
 		var currMin = 0;
 		var currX, currY, currRad;
 		var Dist = [],
@@ -93,7 +93,7 @@ function BubbleCursor(selection) {
 		}
 
 		//Find second closest
-		var secondMin = (currMin + 1) % points.size();
+		var secondMin = (currMin + 1) % points.length;
 		for (var j = 0; j < Dist.length; j++) {
 			if (j != currMin && IntD[j] < IntD[secondMin]) {
 				secondMin = j;
@@ -103,7 +103,7 @@ function BubbleCursor(selection) {
 		//Set cursor radius based on the min of the closest and second closest targets
 		cursorRadius = Math.min(ConD[currMin], IntD[secondMin]);
 
-		//Update cursor and cursor morph
+		//Update cursor
 		if (isFinite(cursorRadius) && cursorRadius > 0) {
 			cursor
 				.attr("cx",mousePt[0])
@@ -116,6 +116,7 @@ function BubbleCursor(selection) {
 				.attr("r", 0);
 		}
 
+		//Update cursor morph
 		if (cursorRadius < ConD[currMin]) {
 			cursorMorph
 				.attr("cx", currX)
@@ -127,7 +128,7 @@ function BubbleCursor(selection) {
 				.attr("cy",0)
 				.attr("r",0);
 		}
-		
+
 		return target;
 	};
 
