@@ -50,7 +50,6 @@ body {
 	clip-path: url(#StreamScatterPlotClip);
 }
 
-
 .trail {
 	stroke: #FFA300;
 	clip-path: url(#StreamScatterPlotClip);
@@ -75,6 +74,5 @@ body {
 	fill-opacity: 0.5;
 	clip-path: url(#StreamScatterPlotClip);
 }
-
 
 svg {cursor: none;}

@@ -39,17 +39,17 @@ function FreezeAroundClosest(selection, manualFreeze) {
 			.attr("cx", 0)
 			.attr("cy", 0)
 			.attr("r", 0);
-
-		//Create clip for manual freeze region
-		var clip = selection.select("defs")
-			.append("clipPath")
-				.attr("id", "freezeClip")
-			.append("circle")
-				.attr("class","manual freezeRegion")
-				.attr("cx", 0)
-				.attr("cy", 0)
-				.attr("r", frzRadius);
 	}
+
+	//Create clip for freeze region
+	var clip = selection.select("defs")
+		.append("clipPath")
+			.attr("id", "freezeClip")
+		.append("circle")
+			.attr("class","clip freezeRegion")
+			.attr("cx", 0)
+			.attr("cy", 0)
+			.attr("r", frzRadius);
 
 	//Redraw freeze region on mousemove
 	selection.on("mousemove.freezeSelector", function(d,i) {
@@ -111,6 +111,13 @@ function FreezeAroundClosest(selection, manualFreeze) {
 		//Snapshot points near target
 		if(!manualFrz) {
 			FreezeAroundClosest.createSnapshots(currPt, target);
+		}
+
+		//Update freeze region clip
+		if(!manualFrz) {
+			clip
+				.attr("cx",currPt[0])
+				.attr("cy",currPt[1]);
 		}
 
 		//Remove snapshots out of targets area

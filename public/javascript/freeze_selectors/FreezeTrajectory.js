@@ -40,6 +40,7 @@ function FreezeTrajectory(selection, manualFreeze) {
 		.attr("class", "freezeRegion")
 		.attr("points", "0,0 0,0 0,0");
 
+	console.log(selection);
 	//Create clipping for freeze region
 	var clip = selection.select("defs")
 		.append("clipPath")

@@ -38,26 +38,30 @@ function FreezeAroundCursor(selection, manualFreeze) {
 			.attr("cx", 0)
 			.attr("cy", 0)
 			.attr("r", 0);
-
-		//Create clip for manual freeze region
-		var clip = selection.select("defs")
-			.append("clipPath")
-				.attr("id", "freezeClip")
-			.append("circle")
-				.attr("class","manual freezeRegion")
-				.attr("cx", 0)
-				.attr("cy", 0)
-				.attr("r", frzRadius);
 	}
+
+	//Create clip for freeze region
+	var clip = selection.select("defs")
+		.append("clipPath")
+			.attr("id", "freezeClip")
+		.append("circle")
+			.attr("class","clip freezeRegion")
+			.attr("cx", 0)
+			.attr("cy", 0)
+			.attr("r", frzRadius);
 
 	if (!manualFrz) {
 		//Redraw freeze region and update frozen elements on mouse move
 		selection.on("mousemove.freezeSelector", function(d,i) {
+			var mouse = d3.mouse(this);
 			freezeRegion
 				.attr("cx",0)
 				.attr("cy",0)
 				.attr("r",frzRadius);
-			FreezeAroundCursor.redraw(d3.mouse(this));
+			clip
+				.attr("cx",mouse[0])
+				.attr("cy",mouse[1]);
+			FreezeAroundCursor.redraw(mouse);
 		});
 	} else {
 		//Redraw freeze region on mousemove; store mouse location
