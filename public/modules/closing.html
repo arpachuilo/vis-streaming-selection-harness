@@ -1,86 +1,312 @@
 
 <strong>Closing Questionnaire</strong>
 <div id="closing">
-  <h5> <span id="status"></span> </h5>
-  <p id="demoinstr">
-  Almost done! Please answer a few more questions.
-  </p>
+  <br>
+  <div>
+    <h4>A ) For each technique, please rate the following on a scale of one(strongly disagree) to seven(strongly agree).</h4>
+    <div id="q1">
+      <div id="whol">
+        <strong> Whole Screen Freeze </strong>
 
-  <br>
-  <div id="hardest">
-    <text id="hardestLabel" fill="red">Which type of question do you think was the <strong>most difficult</strong>?</text>
-    <div id="hardestValidate" class="validate" style="font-size: 150%; left: 10px; float: left;"></div>
-      <div id="hardestRadio">
-          <input type="radio" id="dh1" name="hardest" value="averages"> Estimate averages<br>
-          <input type="radio" id="dh2" name="hardest" value="comparison"> Compare values<br>
-          <input type="radio" id="dh3" name="hardest" value="outliers"> Outliers<br>
-          <input type="radio" id="dh4" name="hardest" value="trend"> Trend shape<br>
-          <input type="radio" id="dh5" name="hardest" value="dontknow"> Not sure<br>
+        <br>
+        <text id="wholLabel1" fill="red">1. The technique was difficult to use:</text>
+        <input type="text" class="textfield" value="" id="wholText1" size="3" maxlength="1" name="wholText1" onkeypress="return is1to7(event)" />
+        <div id="wholValidate1" class="validate" style="font-size: 150%; left: 10px; float: left;"></div>
+        <br>
+
+        <text id="wholLabel2" fill="red">2. The technique was easy to understand:</text>
+        <input type="text" class="textfield" value="" id="wholText2" size="3" maxlength="1" name="wholText2" onkeypress="return is1to7(event)" />
+        <div id="wholValidate2" class="validate" style="font-size: 150%; left: 10px; float: left;"></div>
+        <br>
+
+        <text id="wholLabel3" fill="red">3. The technique was easy to use:</text>
+        <input type="text" class="textfield" value="" id="wholText3" size="3" maxlength="1" name="wholText3" onkeypress="return is1to7(event)" />
+        <div id="wholValidate3" class="validate" style="font-size: 150%; left: 10px; float: left;"></div>
+        <br>
+
+        <text id="wholLabel4" fill="red">4. The technique was confusing or difficult to understand:</text>
+        <input type="text" class="textfield" value="" id="wholText4" size="3" maxlength="1" name="wholText4" onkeypress="return is1to7(event)" />
+        <div id="wholValidate4" class="validate" style="font-size: 150%; left: 10px; float: left;"></div>
+        <br>
+
+        <text id="wholLabel5" fill="red">5. The technique made it difficult to select the target I wanted:</text>
+        <input type="text" class="textfield" value="" id="wholText5" size="3" maxlength="1" name="wholText5" onkeypress="return is1to7(event)" />
+        <div id="wholValidate5" class="validate" style="font-size: 150%; left: 10px; float: left;"></div>
+        <br>
+
+        <text id="wholLabel6" fill="red">6. The technique made it easy to select the target I wanted:</text>
+        <input type="text" class="textfield" value="" id="wholText6" size="3" maxlength="1" name="wholText6" onkeypress="return is1to7(event)" />
+        <div id="wholValidate6" class="validate" style="font-size: 150%; left: 10px; float: left;"></div>
+        <br>
+
+        <text id="wholLabel7" fill="red">7. I did not like the technique:</text>
+        <input type="text" class="textfield" value="" id="wholText7" size="3" maxlength="1" name="wholText7" onkeypress="return is1to7(event)" />
+        <div id="wholValidate7" class="validate" style="font-size: 150%; left: 10px; float: left;"></div>
+        <br>
+
+        <text id="wholLabel8" fill="red">8. The technique was fun to use:</text>
+        <input type="text" class="textfield" value="" id="wholText8" size="3" maxlength="1" name="wholText8" onkeypress="return is1to7(event)" />
+        <div id="wholValidate8" class="validate" style="font-size: 150%; left: 10px; float: left;"></div>
+        <br>
+
+        <text id="wholLabel9" fill="red">9. I would want to use this technique to select moving targets:</text>
+        <input type="text" class="textfield" value="" id="wholText9" size="3" maxlength="1" name="wholText9" onkeypress="return is1to7(event)" />
+        <div id="wholValidate9" class="validate" style="font-size: 150%; left: 10px; float: left;"></div>
+        <br>
+
       </div>
-  </div>
-  <br>
-  <div id="easiest">
-    <text id="easiestLabel" fill="red">Which type of question do you think was the <strong>easiest</strong>?</text>
-    <div id="easiestValidate" class="validate" style="font-size: 150%; left: 10px; float: left;"></div>
-      <div id="easiestRadio">
-          <input type="radio" id="de1" name="easiest" value="averages"> Estimate averages<br>
-          <input type="radio" id="de2" name="easiest" value="comparison"> Compare values<br>
-          <input type="radio" id="de3" name="easiest" value="outliers"> Outliers<br>
-          <input type="radio" id="de4" name="easiest" value="trend"> Trend shape<br>
-          <input type="radio" id="de5" name="easiest" value="dontknow"> Not sure<br>
+      <br>
+      <div id="acur">
+        <strong> Freeze Around Cursor </strong>
+
+        <br>
+        <text id="acurLabel1" fill="red">1. The technique was difficult to use:</text>
+        <input type="text" class="textfield" value="" id="acurText1" size="3" maxlength="1" name="acurText1" onkeypress="return is1to7(event)" />
+        <div id="acurValidate1" class="validate" style="font-size: 150%; left: 10px; float: left;"></div>
+        <br>
+
+        <text id="acurLabel2" fill="red">2. The technique was easy to understand:</text>
+        <input type="text" class="textfield" value="" id="acurText2" size="3" maxlength="1" name="acurText2" onkeypress="return is1to7(event)" />
+        <div id="acurValidate2" class="validate" style="font-size: 150%; left: 10px; float: left;"></div>
+        <br>
+
+        <text id="acurLabel3" fill="red">3. The technique was easy to use:</text>
+        <input type="text" class="textfield" value="" id="acurText3" size="3" maxlength="1" name="acurText3" onkeypress="return is1to7(event)" />
+        <div id="acurValidate3" class="validate" style="font-size: 150%; left: 10px; float: left;"></div>
+        <br>
+
+        <text id="acurLabel4" fill="red">4. The technique was confusing or difficult to understand:</text>
+        <input type="text" class="textfield" value="" id="acurText4" size="3" maxlength="1" name="acurText4" onkeypress="return is1to7(event)" />
+        <div id="acurValidate4" class="validate" style="font-size: 150%; left: 10px; float: left;"></div>
+        <br>
+
+        <text id="acurLabel5" fill="red">5. The technique made it difficult to select the target I wanted:</text>
+        <input type="text" class="textfield" value="" id="acurText5" size="3" maxlength="1" name="acurText5" onkeypress="return is1to7(event)" />
+        <div id="acurValidate5" class="validate" style="font-size: 150%; left: 10px; float: left;"></div>
+        <br>
+
+        <text id="acurLabel6" fill="red">6. The technique made it easy to select the target I wanted:</text>
+        <input type="text" class="textfield" value="" id="acurText6" size="3" maxlength="1" name="acurText6" onkeypress="return is1to7(event)" />
+        <div id="acurValidate6" class="validate" style="font-size: 150%; left: 10px; float: left;"></div>
+        <br>
+
+        <text id="acurLabel7" fill="red">7. I did not like the technique:</text>
+        <input type="text" class="textfield" value="" id="acurText7" size="3" maxlength="1" name="acurText7" onkeypress="return is1to7(event)" />
+        <div id="acurValidate7" class="validate" style="font-size: 150%; left: 10px; float: left;"></div>
+        <br>
+
+        <text id="acurLabel8" fill="red">8. The technique was fun to use:</text>
+        <input type="text" class="textfield" value="" id="acurText8" size="3" maxlength="1" name="acurText8" onkeypress="return is1to7(event)" />
+        <div id="acurValidate8" class="validate" style="font-size: 150%; left: 10px; float: left;"></div>
+        <br>
+
+        <text id="acurLabel9" fill="red">9. I would want to use this technique to select moving targets:</text>
+        <input type="text" class="textfield" value="" id="acurText9" size="3" maxlength="1" name="acurText9" onkeypress="return is1to7(event)" />
+        <div id="acurValidate9" class="validate" style="font-size: 150%; left: 10px; float: left;"></div>
+        <br>
+
       </div>
-  </div>
-  <br>
-  <div id="understand">
-    <text id="understandLabel" fill="red">Was there any type of question that you did <strong>NOT</strong> understand?</text>
-    <div id="understandValidate" class="validate" style="font-size: 150%; left: 10px; float: left;"></div>
-      <div id="understandCheck">
-          <input type="checkbox" id="duA" name="understand" value="averages"> Estimate averages<br>
-          <input type="checkbox" id="duC" name="understand" value="comparison"> Compare values<br>
-          <input type="checkbox" id="duO" name="understand" value="outliers"> Outliers<br>
-          <input type="checkbox" id="duS" name="understand" value="trend"> Trend shape<br>
+      <br>
+      <div id="aclo">
+        <strong> Freeze Around Closest </strong>
+
+        <br>
+        <text id="acloLabel1" fill="red">1. The technique was difficult to use:</text>
+        <input type="text" class="textfield" value="" id="acloText1" size="3" maxlength="1" name="acloText1" onkeypress="return is1to7(event)" />
+        <div id="acloValidate1" class="validate" style="font-size: 150%; left: 10px; float: left;"></div>
+        <br>
+
+        <text id="acloLabel2" fill="red">2. The technique was easy to understand:</text>
+        <input type="text" class="textfield" value="" id="acloText2" size="3" maxlength="1" name="acloText2" onkeypress="return is1to7(event)" />
+        <div id="acloValidate2" class="validate" style="font-size: 150%; left: 10px; float: left;"></div>
+        <br>
+
+        <text id="acloLabel3" fill="red">3. The technique was easy to use:</text>
+        <input type="text" class="textfield" value="" id="acloText3" size="3" maxlength="1" name="acloText3" onkeypress="return is1to7(event)" />
+        <div id="acloValidate3" class="validate" style="font-size: 150%; left: 10px; float: left;"></div>
+        <br>
+
+        <text id="acloLabel4" fill="red">4. The technique was confusing or difficult to understand:</text>
+        <input type="text" class="textfield" value="" id="acloText4" size="3" maxlength="1" name="acloText4" onkeypress="return is1to7(event)" />
+        <div id="acloValidate4" class="validate" style="font-size: 150%; left: 10px; float: left;"></div>
+        <br>
+
+        <text id="acloLabel5" fill="red">5. The technique made it difficult to select the target I wanted:</text>
+        <input type="text" class="textfield" value="" id="acloText5" size="3" maxlength="1" name="acloText5" onkeypress="return is1to7(event)" />
+        <div id="acloValidate5" class="validate" style="font-size: 150%; left: 10px; float: left;"></div>
+        <br>
+
+        <text id="acloLabel6" fill="red">6. The technique made it easy to select the target I wanted:</text>
+        <input type="text" class="textfield" value="" id="acloText6" size="3" maxlength="1" name="acloText6" onkeypress="return is1to7(event)" />
+        <div id="acloValidate6" class="validate" style="font-size: 150%; left: 10px; float: left;"></div>
+        <br>
+
+        <text id="acloLabel7" fill="red">7. I did not like the technique:</text>
+        <input type="text" class="textfield" value="" id="acloText7" size="3" maxlength="1" name="acloText7" onkeypress="return is1to7(event)" />
+        <div id="acloValidate7" class="validate" style="font-size: 150%; left: 10px; float: left;"></div>
+        <br>
+
+        <text id="acloLabel8" fill="red">8. The technique was fun to use:</text>
+        <input type="text" class="textfield" value="" id="acloText8" size="3" maxlength="1" name="acloText8" onkeypress="return is1to7(event)" />
+        <div id="acloValidate8" class="validate" style="font-size: 150%; left: 10px; float: left;"></div>
+        <br>
+
+        <text id="acloLabel9" fill="red">9. I would want to use this technique to select moving targets:</text>
+        <input type="text" class="textfield" value="" id="acloText9" size="3" maxlength="1" name="acloText9" onkeypress="return is1to7(event)" />
+        <div id="acloValidate9" class="validate" style="font-size: 150%; left: 10px; float: left;"></div>
+        <br>
+
       </div>
-  </div>
-  <br>
-  <div id="comment2">
-    <text id="comment2Label" fill="red">Please write any comments you have about things that made the tasks more or less difficult.</text>
-    <div id="comment2Validate" class="validate" style="font-size: 150%; left: 10px; float: left;"></div>
-    <br>
-    <textarea rows="6" cols="80" class="textfield" value="" id="comment2Text" size="125" name="ageText"> </textarea>
-  </div>
-  <br>
-  <div id="comment1">
-    <text id="comment1Label" fill="red">Please write any comments you have about things that you found frustrating about the task or using the visualization.</text>
-    <div id="comment1Validate" class="validate" style="font-size: 150%; left: 10px; float: left;"></div>
-    <br>
-    <textarea rows="6" cols="80" class="textfield" value="" id="comment1Text" size="125" name="ageText"> </textarea>
-  </div>
-  <br>
-  <div id="comment3">
-    <text id="comment3Label" fill="red">Do you have any other comments about the tasks or study?</text>
-    <div id="comment3Validate" class="validate" style="font-size: 150%; left: 10px; float: left;"></div>
-    <br>
-    <textarea rows="6" cols="80" class="textfield" value="" id="comment3Text" size="125" name="ageText"> </textarea>
-  </div>
-  <br>
+      <br>
+      <div id="traj">
+        <strong> Freeze Trajectory </strong>
+
+        <br>
+        <text id="trajLabel1" fill="red">1. The technique was difficult to use:</text>
+        <input type="text" class="textfield" value="" id="trajText1" size="3" maxlength="1" name="trajText1" onkeypress="return is1to7(event)" />
+        <div id="trajValidate1" class="validate" style="font-size: 150%; left: 10px; float: left;"></div>
+        <br>
+
+        <text id="trajLabel2" fill="red">2. The technique was easy to understand:</text>
+        <input type="text" class="textfield" value="" id="trajText2" size="3" maxlength="1" name="trajText2" onkeypress="return is1to7(event)" />
+        <div id="trajValidate2" class="validate" style="font-size: 150%; left: 10px; float: left;"></div>
+        <br>
+
+        <text id="trajLabel3" fill="red">3. The technique was easy to use:</text>
+        <input type="text" class="textfield" value="" id="trajText3" size="3" maxlength="1" name="trajText3" onkeypress="return is1to7(event)" />
+        <div id="trajValidate3" class="validate" style="font-size: 150%; left: 10px; float: left;"></div>
+        <br>
+
+        <text id="trajLabel4" fill="red">4. The technique was confusing or difficult to understand:</text>
+        <input type="text" class="textfield" value="" id="trajText4" size="3" maxlength="1" name="trajText4" onkeypress="return is1to7(event)" />
+        <div id="trajValidate4" class="validate" style="font-size: 150%; left: 10px; float: left;"></div>
+        <br>
+
+        <text id="trajLabel5" fill="red">5. The technique made it difficult to select the target I wanted:</text>
+        <input type="text" class="textfield" value="" id="trajText5" size="3" maxlength="1" name="trajText5" onkeypress="return is1to7(event)" />
+        <div id="trajValidate5" class="validate" style="font-size: 150%; left: 10px; float: left;"></div>
+        <br>
+
+        <text id="trajLabel6" fill="red">6. The technique made it easy to select the target I wanted:</text>
+        <input type="text" class="textfield" value="" id="trajText6" size="3" maxlength="1" name="trajText6" onkeypress="return is1to7(event)" />
+        <div id="trajValidate6" class="validate" style="font-size: 150%; left: 10px; float: left;"></div>
+        <br>
+
+        <text id="trajLabel7" fill="red">7. I did not like the technique:</text>
+        <input type="text" class="textfield" value="" id="trajText7" size="3" maxlength="1" name="trajText7" onkeypress="return is1to7(event)" />
+        <div id="trajValidate7" class="validate" style="font-size: 150%; left: 10px; float: left;"></div>
+        <br>
+
+        <text id="trajLabel8" fill="red">8. The technique was fun to use:</text>
+        <input type="text" class="textfield" value="" id="trajText8" size="3" maxlength="1" name="trajText8" onkeypress="return is1to7(event)" />
+        <div id="trajValidate8" class="validate" style="font-size: 150%; left: 10px; float: left;"></div>
+        <br>
+
+        <text id="trajLabel9" fill="red">9. I would want to use this technique to select moving targets:</text>
+        <input type="text" class="textfield" value="" id="trajText9" size="3" maxlength="1" name="trajText9" onkeypress="return is1to7(event)" />
+        <div id="trajValidate9" class="validate" style="font-size: 150%; left: 10px; float: left;"></div>
+        <br>
+
+      </div>
+      <br>
+    </div>
+
+    <h4>B ) Please rank the techniques in order of preference, starting with your favorite technique</h4>
+    <div id="q2">
+      <ul class="rank">
+        <li> 1. </li>
+        <li> 2. </li>
+        <li> 3. </li>
+        <li> 4. </li>
+      </ul>
+
+      <ul class="technique">
+        <li>Whole Screen Freeze</li>
+        <li>Freeze Around Cursor</li>
+        <li>Freeze Around Closest</li>
+        <li>Freeze Trajectory</li>
+      </ul>
+
+      <style>
+        .technique, .rank {
+          float: left;
+        }
+
+        .technique li, .rank li {
+          list-style: none;
+          background: #FFFFFF;
+          padding: 2px;
+          border: 1px solid #000000;
+        }
+      </style>
+
+      <script>
+        $(function() {
+    			$('.technique').sortable();
+    		});
+      </script>
+    </div>
+
+    <div style="clear:both;"></div>
+
+    <h4>C ) Which technique was your favorite?</h4>
+    <div id="q3">
+      <div id="favValidate" class="validate" style="font-size: 150%; left: 10px; float: left;"></div>
+      <div id="favRadio">
+          <input type="radio" id="f1" name="fav" value="Whole Screen Freeze"> Whole Screen Freeze <br>
+          <input type="radio" id="f2" name="fav" value="Freeze Around Cursor"> Freeze Around Cursor <br>
+          <input type="radio" id="f3" name="fav" value="Freeze Around Closest"> Freeze Around Closest <br>
+          <input type="radio" id="f4" name="fav" value="Trajectory Freeze"> Trajectory Freeze <br>
+      </div>
+      <p> Please explain why. <p>
+      <div id="favWhyValidate" class="validate" style="font-size: 150%; left: 10px; float: left;"></div>
+      <input type="text" class="textfield" value="" id="favWhyText" size="50" maxlength="50" name="favWhyText" />
+    </div>
+
+    <h4>D ) Which technique was your least favorite?</h4>
+    <div id="q4">
+      <div id="leastValidate" class="validate" style="font-size: 150%; left: 10px; float: left;"></div>
+      <div id="leastRadio">
+          <input type="radio" id="f1" name="least" value="Whole Screen Freeze"> Whole Screen Freeze <br>
+          <input type="radio" id="f2" name="least" value="Freeze Around Cursor"> Freeze Around Cursor <br>
+          <input type="radio" id="f3" name="least" value="Freeze Around Closest"> Freeze Around Closest <br>
+          <input type="radio" id="f4" name="least" value="Trajectory Freeze"> Trajectory Freeze <br>
+      </div>
+      <p> Please explain why. <p>
+      <div id="leastWhyValidate" class="validate" style="font-size: 150%; left: 10px; float: left;"></div>
+      <input type="text" class="textfield" value="" id="leastWhyText" size="50" maxlength="50" name="leastWhyText" />
+    </div>
+
+    <h4>E ) Do you have any other feedback about why you liked or disliked any particular technique?</h4>
+    <div id="q5">
+      <div id="feedback1Validate" class="validate" style="font-size: 150%; left: 10px; float: left;"></div>
+      <br>
+      <textarea rows="6" cols="80" class="textfield" value="" id="feedback1Text" size="125" name="feedback1Text"> </textarea>
+    </div>
+
+    <h4>F ) Do you have any other feedback about the study?</h4>
+    <div id="q6">
+      <div id="feedback2Validate" class="validate" style="font-size: 150%; left: 10px; float: left;"></div>
+      <br>
+      <textarea rows="6" cols="80" class="textfield" value="" id="feedback2Text" size="125" name="feedback2Text"> </textarea>
+    </div>
 
   <br>
   <button id="submitComments" class="next-button" type="button">Next</button>
   <div id="validateMessage" class="validate"></div>
-<br>
+  <br>
 </div>
 
-<script> 
+<script>
 
-  function isNumber(evt) {
+  function is1to7(evt) {
     evt = (evt) ? evt : window.event;
     var charCode = (evt.which) ? evt.which : evt.keyCode;
-    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
-        return false;
+    if (charCode > 48 && charCode < 56) {
+        return true;
     }
-    return true;
+    return false;
   }
-
 
 (function() {
   var jiggleDistance = 5;
@@ -114,11 +340,11 @@
     data.noUnderstandC = document.getElementById("duC").checked;
     data.noUnderstandO = document.getElementById("duO").checked;
     data.noUnderstandS = document.getElementById("duS").checked;
-    
+
     data.isComplete = "Yes";
 
     experimentr.addData(data);
-    
+
     //experimentr.release();
     experimentr.next();
   }//end validate
@@ -127,6 +353,6 @@
     .on('click', function () {
       validate();
     });
-  
+
 }());
 </script>
