@@ -1,50 +1,55 @@
 <div id="consent">
 
-<h2 class="placeholder">Title of experiment</h2>
+<h2>Selection of Streaming Data</h2>
 
-<p class="placeholder">
-Background information about experiment, what is required, and how long the experiment should take.
+<p>
+This is a web-based study of visualizations for streaming data. The study involves selecting a dot using various selection techniques. Participation will take approximately 45 minutes.
 </p>
 
 <p>
-Please enter your Amazon Worker Id. <strong>You may only complete this HIT once.</strong> Subsequent completions (e.g. reading the same story twice) will not be accepted:
+For each trial, you will click the 'GO' button and the data will start streaming. You will then click the red dot and once the dot is clicked you will be asked how many blue dots were on the screen.  The 'GO' button will appear again and you will repeat the task.
+</p>
+
+<p>
+<strong>IMPORTANT: Once you begin, please do not use your browser's back button.</strong> It will not allow you to go back.
+</p>
+
+<p>
+This study requires modern versions of <strong>Chrome</strong> or <strong>Firefox</strong> browsers. The application will <strong>not</strong> work correctly on Internet Explorer or Safari.
+</p>
+
+<p>
+Participation is voluntary and no compensation will be given. You may stop at any time if you do not wish to continue. If you need more information about your rights as a study participant, you may contact: The Oak Ridge Site-Wide Institutional Review Board at 865-574-4359 or e-mail ORSIRB@orau.org. If you have other questions about this research, please contact Eric Ragan at raganed@ornl.gov.
+</p>
+<p>
+If you agree to participate, please click the button to provide consent and continue with the study.
+</p>
+
+<button id="consentYes" type="button" class="start-button" disabled>I agree to participate</button>
 <br>
+<p>
+<div id="validateMessage" class="validate"></div>
+</p>
+
+<br />
+
+</div>
 
 <input type="text" id="workerId" name="workerId" disabled="true" size="30" />
 <button id="checkId" type="button">checkId</button>
-<br>
-
-<span id="invalidMessage">
-Our records show that you have taken part in this study before, so we cannot allow you to take this HIT again at this time. Please contact us if you feel this is in error.
-</span>
-</p>
-
-<div id="consentForm">
-<p class="placeholder">Include an IRB or other consent form here. The DIV will automatically create a scrollable window.</p>
-</div>
-
-<p>
-<button id="consentYes" disabled="true" type="button">I Agree</button>
-</p>
-
-<p>
-<strong>Note: this HIT requires a modern browser. If you are not using Chrome or Firefox, the "I Agree" button may not activate even after entering your workerId.</strong>
-</p>
-
-</div>
 
 <style>
   #invalidMessage {
     display: none;
     color: red;
   }
-  #consentForm {
+  /*#consentForm {
     border: 1px solid #ccc;
     border-radius: 5px;
     height: 200px;
     overflow-y: scroll;
     padding: 15px;
-  }
+  }*/
 </style>
 
 <script>
@@ -72,6 +77,8 @@ Our records show that you have taken part in this study before, so we cannot all
     d3.select('#checkId').on('click', validate);
   }
 
+  //Create Function Fetch workerID from handler
+
   function validate() {
     if( data.workerId ) {
       experimentr.addData(data);
@@ -85,4 +92,6 @@ Our records show that you have taken part in this study before, so we cannot all
   }
 
 }());
+
+
 </script>
