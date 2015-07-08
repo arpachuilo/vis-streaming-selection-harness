@@ -1,5 +1,4 @@
 body {
-	font: 10px sans-serif;
 	overflow: hidden;
 	-webkit-touch-callout: none;
 	-webkit-user-select: none;
@@ -12,8 +11,17 @@ body {
 .axis path,
 .axis line {
 	fill: none;
-	stroke: #000;
-	shape-rendering: crispEdges;
+	stroke: none;
+}
+
+.tick {
+	fill: none;
+	stroke: none;
+}
+
+.label {
+	fill: none;
+	stroke: none;
 }
 
 .point {
@@ -74,5 +82,3 @@ body {
 	fill-opacity: 0.5;
 	clip-path: url(#StreamScatterPlotClip);
 }
-
-svg {cursor: none;}

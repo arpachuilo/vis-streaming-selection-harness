@@ -82,6 +82,7 @@ experimentr = function() {
       .header("Content-Type", "application/json")
       .post(JSON.stringify(data), function(err, res) {
         if(err) console.log(err);
+        else console.log(JSON.stringify(data));
       });
   }
 
@@ -146,15 +147,15 @@ experimentr = function() {
   // Start a timer with a given String as key
   experimentr.startTimer = function(x) {
     console.log('starting timer: '+x);
-    data['time_start_'+x] = Date.now(); 
+    data['time_start_'+x] = Date.now();
   }
 
   // End an existing timer (using a String key)
   // TODO throw an error if a start wasn't called.
   experimentr.endTimer = function(x) {
     console.log('ending timer: '+x);
-    data['time_end_'+x] = Date.now(); 
-    data['time_diff_'+x] = parseFloat(data['time_end_'+x]) - parseFloat(data['time_start_'+x]); 
+    data['time_end_'+x] = Date.now();
+    data['time_diff_'+x] = parseFloat(data['time_end_'+x]) - parseFloat(data['time_start_'+x]);
     experimentr.save();
   }
 

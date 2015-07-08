@@ -1,5 +1,10 @@
 function StreamScatterPlot() {
 
+	//FOR EXPERIMENTAL REASONS!!!
+	var errors = 0;
+	var time_start = +new Date();
+
+
 	//Default values for chart
 	var margin = {top: 10, right: 10, bottom: 30, left: 30},
 		height = 420,
@@ -83,8 +88,11 @@ function StreamScatterPlot() {
 			svg.call(cursor);
 
 			//Update the outer dimensions
-			svg .attr("width", width)
-				.attr("height", height);
+			svg
+				.attr("id", "chart")
+				.attr("width", width)
+				.attr("height", height)
+				.attr("cursor", "none");
 
 			//Update the inner dimensions
 			gChart = svg.select("g.chart")
@@ -157,21 +165,14 @@ function StreamScatterPlot() {
 			svg.on("mousedown.StreamScatterPlot."  + selection.attr("id"), function(d, i) {
 				var target = d3.select(targetName);
 				if (trailsAllowed) var targetTrail = d3.select("#targetTrail");
-				if (target != null && !d3.event.shiftKey) {
-					target.transition().duration(500).ease("bounce")
-							.attr("r", pointRadius * 2)
-							.style("fill-opacity", 0.0)
-						.transition().duration(500).ease("bounce")
-							.attr("r", pointRadius)
-							.style("fill-opacity", 1.0);
-					if (trailsAllowed) {
-						targetTrail.transition().duration(500).ease("bounce")
-								.attr("stroke-width", 12)
-								.style("stroke-opacity", 0.0)
-							.transition().duration(500).ease("bounce")
-								.attr("stroke-width", 6)
-								.style("stroke-opacity", 1.0);
-					}
+				if (target != null && !d3.event.shiftKey && target.attr("class") == "primary point target") {
+					d3.select("svg").remove();
+					var time_end = +new Date();
+					var trial_time = time_end - time_start;
+					addTrialData(errors, trial_time);
+					createGo();
+				} else if (target != null && !d3.event.shiftKey) {
+					errors += 1;
 				}
 			});
 

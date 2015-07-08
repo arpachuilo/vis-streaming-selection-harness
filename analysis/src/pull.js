@@ -25,5 +25,5 @@ function data (k, i, arr) {
 }
 
 function log (obj) {
-  console.log(JSON.stringify(obj, null, "\t"))
+  console.log((JSON.stringify(obj, null, '\t')))
 }

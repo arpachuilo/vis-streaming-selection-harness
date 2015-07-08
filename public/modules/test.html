@@ -1,22 +1,3 @@
-<!-- Stylesheet -->
-<link rel="stylesheet" type="text/css" href="css/stylesheet.css">
-
-<!-- Misc Scripts -->
-<script type="text/javascript" src="javascript/misc/TrailDrawer.js"></script>
-
-<!-- Cursor Scripts -->
-<script type="text/javascript" src="javascript/cursor_selectors/BubbleCursor.js"></script>
-<script type="text/javascript" src="javascript/cursor_selectors/NormalCursor.js"></script>
-
-<!-- Freeze Scripts -->
-<script type="text/javascript" src="javascript/freeze_selectors/FreezeWholeScreen.js"></script>
-<script type="text/javascript" src="javascript/freeze_selectors/FreezeAroundCursor.js"></script>
-<script type="text/javascript" src="javascript/freeze_selectors/FreezeTrajectory.js"></script>
-<script type="text/javascript" src="javascript/freeze_selectors/FreezeAroundClosest.js"></script>
-
-<!-- Chart Scripts -->
-<script type="text/javascript" src="javascript/charts/StreamScatterPlot.js"></script>
-
 <div id="StreamScatterPlot"></div><br>
 <p>Note: Don't mix click:true with accumulations:true.</p>
 <p>Note: Clockdrift adds miliseconds to every point each d3.timer tick.</p>
@@ -79,24 +60,21 @@
 </table>
 <button id="next-module" class="next-button" type="button">Next</button>
 
-<!-- Main Script -->
-<script type="text/javascript" src="javascript/main.js"></script>
-
-<!-- Data Handler -->
-
+<!-- Test Script -->
+<script type="text/javascript" src="javascript/test.js"></script>
 
 <script>
 
 	(function() {
 		experimentr.hideNext();
-		experimentr.startTimer('demo');
+		experimentr.startTimer('test_time');
 		d3.select('#next-module')
 			.on('click', function() {
 				goToNext();
 			});
 
 		function goToNext() {
-			experimentr.endTimer('demo');
+			experimentr.endTimer('test_time');
 			//experimentr.addData(data);
 			//experimentr.release();
 			experimentr.next();

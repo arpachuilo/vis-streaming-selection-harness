@@ -4,7 +4,7 @@
 <p>
 <div id="doneMessage"></div>
 </p>
-<script> 
+<script>
 
 (function() {
     var messageThing = d3.select('#doneMessage');
@@ -41,6 +41,8 @@
       var results = regex.exec(location.search);
       return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
   }
-  
+
+  experimentr.save();
+
 }());
 </script>
