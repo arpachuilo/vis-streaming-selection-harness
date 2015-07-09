@@ -1,22 +1,9 @@
 <div id="trialsChart"></div>
-<button id="next-module" class="next-button" type="button">Next</button>
 <script type="text/javascript" src="javascript/trials.js"></script>
 <script>
 
 (function() {
-
   experimentr.hideNext();
   experimentr.startTimer('all_trials');
-  d3.select('#next-module')
-    .on('click', function() {
-      goToNext();
-    });
-
-  function goToNext() {
-    experimentr.endTimer('all_trials');
-    experimentr.addData(getTrialData());
-    //experimentr.release();
-    experimentr.next();
-  }
 }());
 </script>

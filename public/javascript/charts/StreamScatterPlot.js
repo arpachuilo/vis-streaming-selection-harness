@@ -6,7 +6,7 @@ function StreamScatterPlot() {
 
 
 	//Default values for chart
-	var margin = {top: 10, right: 10, bottom: 30, left: 30},
+	var margin = {top: 10, right: 10, bottom: 30, left: 0},
 		height = 420,
 		width = 860,
 		xValue = function(d) { return d[0]; },
@@ -19,7 +19,8 @@ function StreamScatterPlot() {
 		yAxis = d3.svg.axis().scale(yScale).orient("left"),
 		xLabel = "time",
 		yLabel = "value",
-		pointRadius = 6,
+		pWidth = 10,
+		pHeight = 10,
 		cursor = function(selection) {},
 		cursorFunction = function(selection) {},
 		targetName = ".target",
@@ -61,7 +62,7 @@ function StreamScatterPlot() {
 
 			//Update the y-scale
 			yScale
-				.domain([0, d3.max(dataset, function(d) { return d[1]; }) + pointRadius])
+				.domain([-pHeight, d3.max(dataset, function(d) { return d[1]; }) + pHeight])
 				.range([height - margin.top - margin.bottom, 0]);
 
 			//Select the svg element, if it exists
@@ -70,6 +71,16 @@ function StreamScatterPlot() {
 			//Otherwise, create the skeletal chart
 			var gEnter = svg.enter().append("svg")
 				.on("wheel.zoom", zoom);
+
+			//Create Border
+			svg.append("rect")
+		             .attr("x", 0)
+		             .attr("y", 0)
+		             .attr("width", width)
+		             .attr("height", height)
+		             .style("stroke", "black")
+		             .style("fill", "none")
+		             .style("stroke-width", "1px");
 
 			//Create rest of skeletal chart
 			defs = gEnter.append("defs");
@@ -147,7 +158,7 @@ function StreamScatterPlot() {
 			svg.on("mousemove.StreamScatterPlot." + selection.attr("id"), function(d,i) {
 				var mouse = d3.mouse(this);
 				var x = mouse[0],
-					y = mouse[1];
+						y = mouse[1];
 
 				gCursor.select(".vertical")
 					.attr("x1", x)
@@ -164,15 +175,39 @@ function StreamScatterPlot() {
 			//Set on click handler
 			svg.on("mousedown.StreamScatterPlot."  + selection.attr("id"), function(d, i) {
 				var target = d3.select(targetName);
+				if (d3.select(targetName).empty())
+					target = null;
 				if (trailsAllowed) var targetTrail = d3.select("#targetTrail");
-				if (target != null && !d3.event.shiftKey && target.attr("class") == "primary point target") {
-					d3.select("svg").remove();
-					var time_end = +new Date();
-					var trial_time = time_end - time_start;
-					addTrialData(errors, trial_time);
-					createQuestion();
-				} else if (target != null && !d3.event.shiftKey) {
-					errors += 1;
+				if (target != null && !d3.event.shiftKey) {
+					if (target.attr("class") == "primary point target") {
+						d3.select("svg").remove();
+						var time_end = +new Date();
+						var trial_time = time_end - time_start;
+						addTrialData(errors, trial_time);
+						createQuestion();
+					} else {
+						errors += 1;
+						x = +target.attr("x");
+						y = +target.attr("y");
+						target.transition().duration(0).transition().duration(500).ease("bounce")
+								.attr("width", pWidth * 2)
+								.attr("height", pHeight * 2)
+								.attr("y", function(d) { return yScale(d[1]); })
+								.style("fill-opacity", 0.0)
+							.transition().duration(500).ease("bounce")
+								.attr("width", pWidth)
+								.attr("height", pHeight)
+								.attr("y", function(d) { return yScale(d[1]) + pHeight/2; })
+								.style("fill-opacity", 1.0);
+						if (trailsAllowed) {
+							targetTrail.transition().duration(500).ease("bounce")
+									.attr("stroke-width", 12)
+									.style("stroke-opacity", 0.0)
+								.transition().duration(500).ease("bounce")
+									.attr("stroke-width", 6)
+									.style("stroke-opacity", 1.0);
+						}
+					}
 				}
 			});
 
@@ -244,10 +279,17 @@ function StreamScatterPlot() {
 		return chart;
 	};
 
-	//Set point radius
-	chart.pointRadius = function(_) {
-		if (!arguments.length) return pointRadius;
-		pointRadius = _;
+	//Set point width
+	chart.pointWidth = function(_) {
+		if (!arguments.length) return pWidth;
+		pWidth = _;
+		return chart;
+	};
+
+	//Set point height
+	chart.pointHeight = function(_) {
+		if (!arguments.length) return pHeight;
+		pHeight = _;
 		return chart;
 	};
 
@@ -308,21 +350,31 @@ function StreamScatterPlot() {
 
 		//Update
 		points
-			.attr("cx", function(d) { return xScale(d[0]); })
+			.attr("x", function(d) { return xScale(d[0]) + pWidth/2; })
 			.each(function(d) {
-				if(this.getAttribute("cx") < margin.left){
+				if(this.getAttribute("x") < margin.left - pWidth){
 					dataset.splice(dataset.indexOf(d), 1);
+					if(this.getAttribute("class") == "primary point") {
+						d3.select("svg").remove();
+						var time_end = +new Date();
+						var trial_time = time_end - time_start;
+						addTrialData(errors, trial_time);
+						createQuestion();
+					}
 				}
 			});
 
 		//Enter
 		points
 			.enter()
-			.append("circle")
+			.append("rect")
 				.attr("class", function(d) { return d[2]; })
-				.attr("r", pointRadius)
-				.attr("cx", function(d) { return xScale(d[0]); })
-				.attr("cy", function(d) { return yScale(d[1]); });
+				.attr("rx", function(d) { return d[2] == "secondary point" ? 0 : 100})
+				.attr("ry", function(d) { return d[2] == "secondary point" ? 0 : 100})
+				.attr("width", pWidth)
+				.attr("height", pHeight)
+				.attr("x", function(d) { return xScale(d[0]) + pWidth/2; })
+				.attr("y", function(d) { return yScale(d[1]) + pHeight/2; });
 
 		//Exit
 		points.exit().each(function(d, i) {

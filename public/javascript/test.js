@@ -51,6 +51,8 @@ d3.json("data/stream_test.json", function(error, data) {
 		console.log(data);
 	}
 
+  data = data[0];
+
 	//Adds current time to time offset to simulate a realtime dataset
 	var now = new Date();
 	data.forEach(function (d) {

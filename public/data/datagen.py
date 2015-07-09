@@ -21,8 +21,8 @@ def createSet(repeat, timeoffset):
 	subset = list()
 	i = 0
 	j = 0
-	r1 = random.randrange(0, 10)
-	r2 = random.randrange(0, 10)
+	r1 = random.randrange(50, 100) #Primary Goal
+	r2 = random.randrange(3, 16) #Secondary Goal
 	if r1 == r2:
 		r2 += 1
 	while i < repeat:
@@ -39,16 +39,17 @@ def main(argv):
 	repeat = 0
 	sets = 0
 	timeoffset = 1
+	append = False
 
 	#Get command line args
 	try:
-		opts, args = getopt.getopt(argv,"ho:s:r:t:",["outfile=","sets=","repeat=","timeoffset="])
+		opts, args = getopt.getopt(argv,"ho:s:r:t:a",["outfile=","sets=","repeat=","timeoffset=","append="])
 	except getopt.GetoptError:
-		print 'datagen.py -o <outputfile> -s <sets> -r <repeat> -t <timeoffset>'
+		print 'datagen.py -o <outputfile> -s <sets> -r <repeat> -t <timeoffset> -a <append>'
 		sys.exit(2)
 	for opt, arg in opts:
 		if opt == '-h':
-			print 'datagen.py -o <outputfile> -s <sets> -r <repeat> -t <timeoffset>'
+			print 'datagen.py -o <outputfile> -s <sets> -r <repeat> -t <timeoffset> -a <append>'
 			sys.exit()
 		elif opt in ("-o", "--outfile"):
 			outputfile = arg
@@ -58,9 +59,20 @@ def main(argv):
 			repeat = int(arg)
 		elif opt in ("-t", "--timeoffset"):
 			timeoffset = float(arg)
+		elif opt in ("-a", "--append"):
+			append = True
 
 	#Create data
 	dataset = list()
+	if append == True:
+		try:
+			with open(outputfile) as f:
+			    dataset = json.load(f)
+		except:
+			print 'datagen.py -o <outputfile> -s <sets> -r <repeat> -t <timeoffset> -a <append>'
+			print 'cant load file'
+			sys.exit(2)
+
 	i = 0
 	while i < sets:
 		dataset.append(createSet(repeat, timeoffset))
@@ -70,7 +82,7 @@ def main(argv):
 		with open(outputfile, 'w') as outfile:
 		    json.dump(dataset, outfile, indent=4, sort_keys=True)
 	except:
-		print 'datagen.py -o <outputfile> -s <sets> -r <repeat> -t <timeoffset>'
+		print 'datagen.py -o <outputfile> -s <sets> -r <repeat> -t <timeoffset> -a <append>'
 		sys.exit(2)
 
 if __name__ == "__main__":

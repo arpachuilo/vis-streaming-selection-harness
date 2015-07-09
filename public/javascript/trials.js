@@ -1,13 +1,15 @@
 var data = {};
 data.trials = [];
 var trialNumber = 0;
+var numTrials = 0;
 var dataset;
 var width = 900,
     height = 360;
 
-// createGo();
-createQuestion();
+createGo();
+
 //Load JSON file
+//Fix to load file once
 function load() {
   d3.json("data/stream_test.json", function(error, data) {
     if (error) {
@@ -15,6 +17,10 @@ function load() {
     } else {
       console.log(data);
     }
+
+    numTrials = data.length;
+
+    //Get first trial
     data = data[trialNumber];
     dataset = data;
     //load in cursor value as well
@@ -22,7 +28,7 @@ function load() {
     //Adds current time to time offset to simulate a realtime dataset
     var now = +new Date() + 1000;
     data.forEach(function (d) {
-      d.timeoffset = (now) + d.timeoffset * 1000;
+      d.timeoffset = (now - (20 * 1000)) + d.timeoffset * 1000;
       d.timeoffset = +d.timeoffset;
       d.value = +d.value;
       d.primary = d.primary;
@@ -56,21 +62,34 @@ function createChart() {
 //Create Cursor
 function createCursor() {
   var svg = d3.select("svg").data(StreamScatterPlot.getData());
-  NormalCursor(svg);
+  BubbleCursor(svg);
+  FreezeAroundClosest(svg);
+  BubbleCursor.tarName(".snapshot");
   //Update current selectors
   d3.timer(function() {
   	//Redraw cursor selector
-  	NormalCursor.redraw();
+  	BubbleCursor.redraw();
+    FreezeAroundClosest.redraw();
   });
 }
 
+//Loads up chart streaming once GO is clicked
 function createGo() {
   var svg = d3.select("#trialsChart").append("svg")
-    .attr("border", 1)
+    .attr("id", "go")
     .attr("width", width)
     .attr("height", height);
 
-  var g = svg.append("g").attr("class", "go");
+  svg.append("rect")
+             .attr("x", 0)
+             .attr("y", 0)
+             .attr("width", width)
+             .attr("height", height)
+             .style("stroke", "black")
+             .style("fill", "none")
+             .style("stroke-width", "1px");
+
+  var g = svg.append("g").attr("class", "goButton");
   var goCircle = g.append("circle")
     .attr("cx", width/2)
     .attr("cy", height/2)
@@ -87,19 +106,31 @@ function createGo() {
 
   goCircle.transition().duration(500).attr("r", 50);
   goText.transition().duration(500).style("font-size", "50px");
-  g.on("click.go", function() { d3.select("svg").remove(); load(); });
+  g.on("click.go", function() { d3.select("#go").remove(); load(); });
 }
 
+//Loads up secondary task
+//If last trial continues to closing questionnaire
+//Else pass over to secondary task
 function createQuestion() {
   var svg = d3.select("#trialsChart").append("svg")
-    .attr("border", "1px solid black")
+    .attr("id", "question")
     .attr("width", width)
     .attr("height", height);
+
+  svg.append("rect")
+       			.attr("x", 0)
+       			.attr("y", 0)
+       			.attr("width", width)
+       			.attr("height", height)
+       			.style("stroke", "black")
+       			.style("fill", "none")
+       			.style("stroke-width", "1px");
 
   var numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
   var rows = 3;
   var cols = 3;
-  var g = svg.append("g").attr("class", "question");
+  var g = svg.append("g").attr("class", "questionNumpad");
   var numpad = g.selectAll("nums").data(numbers);
   var text = g.selectAll("numtext").data(numbers);
   numpad.enter().append("rect")
@@ -125,15 +156,33 @@ function createQuestion() {
     .attr("y", function(d, i) { return height/2 - rows*40/2 + Math.trunc(i/rows)*50; });
 
 
-  numpad.on("click.numpad", function(d, i) { console.log(d3.select(this).data()); d3.select("svg").remove(); createGo(); });
-  text.on("click.numpad", function(d, i) { console.log(d3.select(this).data()); d3.select("svg").remove(); createGo(); });
+  numpad.on("click.numpad", function(d, i) {
+    console.log(d3.select(this).data());
+    d3.select("#question").remove();
+    if (trialNumber < numTrials)
+      createGo();
+    else
+      goToNext();
+  });
+
+  text.on("click.numpad", function(d, i) {
+    console.log(d3.select(this).data());
+    d3.select("#question").remove();
+    if (trialNumber < numTrials)
+      createGo();
+    else
+      goToNext();
+  });
+}
+
+function goToNext() {
+  experimentr.endTimer('all_trials');
+  experimentr.addData(data);
+  //experimentr.release();
+  experimentr.next();
 }
 
 function addTrialData(err, time) {
   data.trials[trialNumber] = { "id": trialNumber, "errors": err, "time": time };
   trialNumber += 1;
-}
-
-function getTrialData() {
-  return data;
 }
