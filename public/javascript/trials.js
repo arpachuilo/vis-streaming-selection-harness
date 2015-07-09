@@ -5,8 +5,8 @@ var dataset;
 var width = 900,
     height = 360;
 
-createGo();
-
+// createGo();
+createQuestion();
 //Load JSON file
 function load() {
   d3.json("data/stream_test.json", function(error, data) {
@@ -66,24 +66,67 @@ function createCursor() {
 
 function createGo() {
   var svg = d3.select("#trialsChart").append("svg")
+    .attr("border", 1)
     .attr("width", width)
     .attr("height", height);
 
   var g = svg.append("g").attr("class", "go");
-  g.append("circle")
+  var goCircle = g.append("circle")
     .attr("cx", width/2)
     .attr("cy", height/2)
-    .attr("r", 50)
-    .style("fill", "green");
-  g.append("text")
+    .attr("r", 0)
+    .style("fill", "#4CAF50");
+  var goText = g.append("text")
     .attr("x", width/2 - 40)
     .attr("y", height/2 + 20)
     .style("font-family", "sans-serif")
-    .style("font-size", "50px")
-    .style("fill", "white")
+    .style("font-size", "0px")
+    .style("fill", "#F4F4F4")
     .style("cursor", "default")
     .text("GO");
+
+  goCircle.transition().duration(500).attr("r", 50);
+  goText.transition().duration(500).style("font-size", "50px");
   g.on("click.go", function() { d3.select("svg").remove(); load(); });
+}
+
+function createQuestion() {
+  var svg = d3.select("#trialsChart").append("svg")
+    .attr("border", "1px solid black")
+    .attr("width", width)
+    .attr("height", height);
+
+  var numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+  var rows = 3;
+  var cols = 3;
+  var g = svg.append("g").attr("class", "question");
+  var numpad = g.selectAll("nums").data(numbers);
+  var text = g.selectAll("numtext").data(numbers);
+  numpad.enter().append("rect")
+    .attr("x", function(d, i) { return width/2 - cols*50/2; })
+    .attr("y", function(d, i) { return height/2 - rows*50/2; })
+    .attr("width", 40)
+    .attr("height", 40)
+    .style("fill", "#F44336");
+
+  text.enter().append("text")
+    .text(function(d, i) { return d; } )
+    .attr("x", function(d, i) { return width/2 - cols*40/2; })
+    .attr("y", function(d, i) { return height/2 - rows*40/2; })
+    .style("fill", "#F4F4F4")
+    .style("cursor", "default");
+
+  numpad.transition().duration(750)
+    .attr("x", function(d, i) { return width/2 - cols*50/2 + (i%cols)*50; })
+    .attr("y", function(d, i) { return height/2 - rows*50/2 + Math.trunc(i/rows)*50; });
+
+  text.transition().duration(750)
+    .attr("x", function(d, i) { return width/2 - cols*40/2 + (i%cols)*50; })
+    .attr("y", function(d, i) { return height/2 - rows*40/2 + Math.trunc(i/rows)*50; });
+
+
+  numpad.on("click.numpad", function(d, i) { console.log(d3.select(this).data()); d3.select("svg").remove(); createGo(); });
+  text.on("click.numpad", function(d, i) { console.log(d3.select(this).data()); d3.select("svg").remove(); createGo(); });
 }
 
 function addTrialData(err, time) {

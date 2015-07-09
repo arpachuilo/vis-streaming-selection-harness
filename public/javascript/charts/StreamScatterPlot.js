@@ -170,7 +170,7 @@ function StreamScatterPlot() {
 					var time_end = +new Date();
 					var trial_time = time_end - time_start;
 					addTrialData(errors, trial_time);
-					createGo();
+					createQuestion();
 				} else if (target != null && !d3.event.shiftKey) {
 					errors += 1;
 				}
