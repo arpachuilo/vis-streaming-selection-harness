@@ -5,13 +5,20 @@ function FreezeWholeScreen(selection) {
 	//Element that contains the 'snapshots' of frozen data
 	var gCopies = selection.insert("g", ".chart").attr("class", "snapshots");
 
-	//Freeze when user hits shift
+	//Freeze when user hits shift / Clear when user hits C
 	d3.select("body")
 		.on("keydown.freezeSelector", function() {
 			if (d3.event.shiftKey) {
 				FreezeWholeScreen.freeze()
+			} else if (d3.event.keyCode == 67) {
+				FreezeWholeScreen.cleanSnapshots();
 			}
 		});
+
+	FreezeWholeScreen.destroy = function() {
+		d3.select("body").on("keydown.freezeSelector", null);
+		gCopies.remove();
+	};
 
 	//Freezes all the data points currently shown
 	FreezeWholeScreen.freeze = function() {
@@ -30,19 +37,17 @@ function FreezeWholeScreen(selection) {
 						w = +pt.attr("width")
 						h = +pt.attr("height")
 						rx = +pt.attr("rx")
-						ry = +pt.attr("ry")
-						fill = pt.attr("fill");
+						ry = +pt.attr("ry");
 
 				pt.attr("id", "tagged");
 				gCopies.append("rect")
-					.attr("class", "i" + d[3] + " snapshot")
+					.attr("class", d[2].replace("point", "") + "i" + d[3] + " snapshot")
 					.attr("width", w)
 					.attr("height", h)
 					.attr("x", x)
 					.attr("y", y)
 					.attr("rx", rx)
-					.attr("ry", ry)
-					.attr("fill", fill);
+					.attr("ry", ry);
 			});
 	};
 

@@ -153,7 +153,7 @@ function FreezeAroundCursor(selection, manualFreeze) {
 					pt.attr("id", "tagged");
 
 					gCopies.append("rect")
-						.attr("class", "i" + d[3] + " snapshot")
+						.attr("class", d[2].replace("point", "") + "i" + d[3] + " snapshot")
 						.attr("width", w)
 						.attr("height", h)
 						.attr("x", x)

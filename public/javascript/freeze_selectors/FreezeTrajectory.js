@@ -40,7 +40,6 @@ function FreezeTrajectory(selection, manualFreeze) {
 		.attr("class", "freezeRegion")
 		.attr("points", "0,0 0,0 0,0");
 
-	console.log(selection);
 	//Create clipping for freeze region
 	var clip = selection.select("defs")
 		.append("clipPath")
@@ -219,7 +218,7 @@ function FreezeTrajectory(selection, manualFreeze) {
 				if(det(ptA, ptB, ptD) <= 0 && det(ptA, ptC, ptD) >= 0 && d3.select(".i" + d[3] +".snapshot").empty()) {
 					pt.attr("id", "tagged");
 					gCopies.append("rect")
-						.attr("class", "i" + d[3] + " snapshot")
+						.attr("class", d[2].replace("point", "") + "i" + d[3] + " snapshot")
 						.attr("width", w)
 						.attr("height", h)
 						.attr("x", x)

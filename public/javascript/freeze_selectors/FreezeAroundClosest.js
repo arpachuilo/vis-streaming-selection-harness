@@ -59,33 +59,33 @@ function FreezeAroundClosest(selection, manualFreeze) {
 	//Set activator for manual freeze (shift key)
 	if (manualFrz) {
 		d3.select("body")
-		.on("keydown.freezeSelector", function() {
-			if (d3.event.shiftKey) {
-				d3.selectAll(targets).attr("id", "untagged");
-				d3.selectAll(".snapshot").remove();
-				var mouse = prevMousePt;
-				var target = FreezeAroundClosest.findClosest(mouse);
-				var currPt = [target.attr("x"), target.attr("y")];
+			.on("keydown.freezeSelector", function() {
+				if (d3.event.shiftKey) {
+					d3.selectAll(targets).attr("id", "untagged");
+					d3.selectAll(".snapshot").remove();
+					var mouse = prevMousePt;
+					var target = FreezeAroundClosest.findClosest(mouse);
+					var currPt = [target.attr("x"), target.attr("y")];
 
-				//Update location of manual freeze region
-				manualFreezeRegion
-						.attr("cx", currPt[0])
-						.attr("cy", currPt[1])
-						.attr("r", frzRadius);
+					//Update location of manual freeze region
+					manualFreezeRegion
+							.attr("cx", currPt[0])
+							.attr("cy", currPt[1])
+							.attr("r", frzRadius);
 
-				//Update location of its clip
-				clip
-					.attr("cx",currPt[0])
-					.attr("cy",currPt[1]);
+					//Update location of its clip
+					clip
+						.attr("cx",currPt[0])
+						.attr("cy",currPt[1]);
 
-				//Clean and untag current snapshots
-				FreezeAroundClosest.cleanSnapshots(currPt);
-				d3.selectAll(".point").attr("id", "untagged");
+					//Clean and untag current snapshots
+					FreezeAroundClosest.cleanSnapshots(currPt);
+					d3.selectAll(".point").attr("id", "untagged");
 
-				//Create new snapshots inside freeze region
-				FreezeAroundClosest.createSnapshots(currPt, target);
-			}
-		});
+					//Create new snapshots inside freeze region
+					FreezeAroundClosest.createSnapshots(currPt, target);
+				}
+			});
 	}
 
 	//Update freeze selector
@@ -191,7 +191,7 @@ function FreezeAroundClosest(selection, manualFreeze) {
 				.attr("id", "tagged")
 				.each(function(d, i) {
 					gCopies.append("rect")
-						.attr("class", "i" + d[3] + " snapshot")
+						.attr("class", d[2].replace("point", "") + "i" + d[3] + " snapshot")
 						.attr("id", "snap")
 						.attr("x", currPt[0])
 						.attr("y", currPt[1])
@@ -221,7 +221,7 @@ function FreezeAroundClosest(selection, manualFreeze) {
 				if(currDist <= (frzRadius + r) && d3.select(".i" + d[3] +".snapshot").empty() && point.attr("id") != "tagged" && (accumulations || swap || manualFrz)) {
 					point.attr("id", "tagged");
 					gCopies.append("rect")
-						.attr("class", "i" + d[3] + " snapshot")
+						.attr("class", d[2].replace("point", "") + "i" + d[3] + " snapshot")
 						.attr("id", "snap")
 						.attr("width", w)
 						.attr("height", h)
