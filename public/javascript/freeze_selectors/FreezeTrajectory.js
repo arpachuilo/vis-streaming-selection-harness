@@ -27,7 +27,7 @@ function FreezeTrajectory(selection, manualFreeze) {
 	//Controls accumulation behavior near freeze region
 	var accumulations = false;
 	//If manual is true then freeze will only happen on shift
-	var manualFrz = (typeof manualFreeze === 'undefined') ? false : manualFreeze;;
+	var manualFrz = (typeof manualFreeze === 'undefined') ? false : manualFreeze;
 
 	//Element that contains the 'snapshots' of frozen data
 	var gCopies = selection.insert("g", ".chart").attr("class", "snapshots");
@@ -62,9 +62,8 @@ function FreezeTrajectory(selection, manualFreeze) {
 	if (manualFrz) {
 		d3.select("body")
 			.on("keydown.freezeSelector", function() {
+				mousePt = d3.mouse(this);
 				if (d3.event.shiftKey) {
-					mousePt = d3.mouse(this);
-
 					//Update location of manual freeze region
 					manualFreezeRegion
 						.attr("points", ox + "," + oy + " " +
@@ -81,6 +80,14 @@ function FreezeTrajectory(selection, manualFreeze) {
 
 					//Create new snapshots inside freeze region
 					FreezeTrajectory.createSnapshots([ox, oy], [lx1, ly1], [lx2, ly2]);
+				} else if (d3.event.keyCode == 67) {
+					manualFreezeRegion
+						.attr("points", 0 + "," + 0 + " " +
+														0 + "," + 0 + " " +
+														0 + "," + 0);
+					d3.selectAll(targets).attr("id", "untagged");
+					d3.selectAll(".snapshot").remove();
+					FreezeTrajectory.cleanSnapshots([ox, oy], [lx1, ly1], [lx2, ly2], mousePt);
 				}
 			});
 	}
@@ -89,7 +96,7 @@ function FreezeTrajectory(selection, manualFreeze) {
 	//Redraws 'flashlight' like cursor and 'freezes' targets on the inside
 	FreezeTrajectory.redraw = function(mouse) {
 		var mousePt;
-		if (arguments.length == 0 && !accumulations) return;
+		if (arguments.length === 0 && !accumulations) return;
 		if (arguments.length > 0) {
 			mousePt = [mouse[0], mouse[1]];
 
@@ -99,13 +106,13 @@ function FreezeTrajectory(selection, manualFreeze) {
 			y2 = mousePt[1];
 
 			//Store previous mouse points and interpolate line over those points
-			if (i == threshold && j % 4 == 0) {
+			if (i === threshold && j % 4 === 0) {
 				j = 0;
 				pts.push(mousePt);
 				prevMousePt = catmullRomSpline2D(pts, 0.5);
 				// prevMousePt = pts.shift();
 				pts.shift();
-			} else if (i < threshold && j % 4 == 0) {
+			} else if (i < threshold && j % 4 === 0) {
 				i++;
 				pts.push(mousePt);
 			}
@@ -207,10 +214,10 @@ function FreezeTrajectory(selection, manualFreeze) {
 				var pt = d3.select(this);
 				var x = +pt.attr("x"),
 						y = +pt.attr("y"),
-						w = +pt.attr("width")
-						h = +pt.attr("height")
-						rx = +pt.attr("rx")
-						ry = +pt.attr("ry")
+						w = +pt.attr("width"),
+						h = +pt.attr("height"),
+						rx = +pt.attr("rx"),
+						ry = +pt.attr("ry"),
 						fill = pt.attr("fill");
 
 				var ptD = [x, y];
@@ -268,7 +275,7 @@ function FreezeTrajectory(selection, manualFreeze) {
 		if(!arguments.length) return accumulations;
 		accumulations = _;
 		return FreezeTrajectory;
-	}
+	};
 }
 
 //Interpolate points based on a catmull rom spline

@@ -79,8 +79,8 @@ function FreezeAroundCursor(selection, manualFreeze) {
 	if (manualFrz) {
 		d3.select("body")
 		.on("keydown.freezeSelector", function() {
+			var mouse = prevMousePt;
 			if (d3.event.shiftKey) {
-				var mouse = prevMousePt;
 
 				//Update location of manual freeze region
 				manualFreezeRegion
@@ -98,6 +98,21 @@ function FreezeAroundCursor(selection, manualFreeze) {
 				d3.selectAll(".snapshot").remove();
 				FreezeAroundCursor.cleanSnapshots(mouse);
 				FreezeAroundCursor.createSnapshots(mouse);
+			} else if (d3.event.keyCode == 67) {
+				//Update location of manual freeze region
+				manualFreezeRegion
+						.attr("cx",0)
+						.attr("cy",0)
+						.attr("r",0);
+
+				//Update location of its clip
+				clip
+					.attr("cx",0)
+					.attr("cy",0);
+
+				d3.selectAll(targets).attr("id", "untagged");
+				d3.selectAll(".snapshot").remove();
+				FreezeAroundCursor.cleanSnapshots(mouse);
 			}
 		});
 	}
@@ -149,7 +164,7 @@ function FreezeAroundCursor(selection, manualFreeze) {
 				var targetPt = [x, y];
 				var currDist = distance(mousePt,targetPt);
 
-				if (currDist <= (frzRadius + r) && d3.select(".i" + d[3] + ".snapshot").empty()) {
+				if (currDist <= frzRadius && d3.select(".i" + d[3] + ".snapshot").empty()) {
 					pt.attr("id", "tagged");
 
 					gCopies.append("rect")
@@ -162,7 +177,7 @@ function FreezeAroundCursor(selection, manualFreeze) {
 						.attr("ry", ry)
 						.attr("fill", fill);
 
-				} else if (currDist > (frzRadius + r) && d3.select(".i" + d[3] +".snapshot").empty()) {
+				} else if (currDist > frzRadius && d3.select(".i" + d[3] +".snapshot").empty()) {
 					pt.attr("id", "untagged");
 				}
 			});
@@ -185,7 +200,7 @@ function FreezeAroundCursor(selection, manualFreeze) {
 				var targetPt = [x, y];
 
 				var currDist = distance(mousePt, targetPt);
-				if (currDist > frzRadius + r) {
+				if (currDist > frzRadius) {
 					pt.remove();
 				}
 			});

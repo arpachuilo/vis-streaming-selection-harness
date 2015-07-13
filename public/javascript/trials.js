@@ -1,10 +1,21 @@
+//Hold data collected
 var data = {};
-data.trials = [];
+
+//Hold per combination trial numbers
 var trialNumber = 0;
 var numTrials = 0;
+
+//Holds entire dataset used
 var dataset;
+
+//Holds combination number
+var experiment_number = 0;
+var experiment_length = 0;
+
 var width = 900,
     height = 360;
+
+var loading = false;
 
 var chart = StreamScatterPlot()
     .x(function(d) { return +d.timeoffset; })
@@ -14,9 +25,14 @@ var chart = StreamScatterPlot()
     .width(width)
     .height(height)
     .allowZoom(false)
-    .allowPause(false);
+    .allowPause(false)
+    .allowTrails(true);
+
 var cursorFunc = null;
 var freezeFunc = null;
+
+var previousFrz = "";
+var previousTrail = "";
 
 var experiment_sequence = [];
 var trail = ["none", "ghost", "trail"];
@@ -26,6 +42,14 @@ var speed_density = [
     {"speed": "low", "density": "high"},
     {"speed": "high", "density": "high"},
 ];
+
+//SHuffle trail and speed_density arrays
+shuffle(trail);
+shuffle(speed_density);
+function shuffle(o){
+    for (var j, x, i = o.length; i; j = Math.floor(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);
+    return o;
+}
 
 //5X Technique
 //   |3X Trail
@@ -41,7 +65,7 @@ d3.json("data/sequence.json", function(error, data) {
             var trailType = trail[j];
             for (k = 0; k < 4; k++) {
                 var speed = speed_density[k].speed;
-                var density = speed_density[k].speed;
+                var density = speed_density[k].density;
                 experiment_sequence[n] = {};
                 experiment_sequence[n].freezeType = freezeType;
                 experiment_sequence[n].trailType = trailType;
@@ -51,14 +75,16 @@ d3.json("data/sequence.json", function(error, data) {
             }
         }
     }
-    console.log(experiment_sequence);
+
+    experiment_length = experiment_sequence.length;
     load();
-    createGo();
+    loadNextTrial();
 });
 
 //Load JSON file
-function load() {
-  d3.json("data/stream_test.json", function(error, data) {
+function load(file) {
+  loading = true;
+  d3.json("data/stream_testing.json", function(error, data) {
     if (error) {
       console.log(error);
     } else {
@@ -67,11 +93,16 @@ function load() {
 
     numTrials = data.length;
     dataset = data;
+    loading = false;
   });
 }
 
 //Create chart
-function createChart() {
+function createChart(_speed, _trail) {
+  //Wait for chart to load
+  while (loading) {};
+
+  //Add offset to current time to simulate real time data
   var now = +new Date() + 1000;
   dataset[trialNumber].forEach(function (d) {
     d.timeoffset = (now - (20 * 1000)) + d.timeoffset * 1000;
@@ -81,9 +112,26 @@ function createChart() {
     d.secondary = d3.secondary;
   });
 
+  //Create chart with specified data
   var stream = d3.select("#trialsChart")
     .datum(dataset[trialNumber])
     .call(chart);
+
+  //Set speed modifier
+  if (_speed === "high") {
+    StreamScatterPlot.setClockDrift(100);
+  } else {
+    StreamScatterPlot.setClockDrift(0);
+  }
+
+  //Set trail modifier
+  if (_trail === "none") {
+
+  } else if (_trail === "trail") {
+
+  } else {
+
+  }
 
   //Start streaming
   chart.start();
@@ -177,8 +225,7 @@ function createGo() {
     g.on("click.go", null);
     svg.remove();
     d3.select('#trialsChart').html('');
-    createChart();
-    setSelectors("bubble", "FreezeTrajectory");
+    loadNextTrial();
   });
 }
 
@@ -225,7 +272,7 @@ function createQuestion() {
     svg.remove();
     numpad.on("click.numpad", null);
     d3.select('#trialsChart').html('');
-    if (trialNumber < numTrials)
+    if (experiment_number < experiment_length)
       createGo();
     else
       goToNext();
@@ -236,11 +283,84 @@ function createQuestion() {
     svg.remove();
     text.on("click.numpadText", null);
     d3.select('#trialsChart').html('');
-    if (trialNumber < numTrials)
+    if (experiment_number < experiment_length)
       createGo();
     else
       goToNext();
   });
+}
+
+function createTrainer() {
+  d3.select("#trainInfo").html(
+    "<b>Left_Shift - </b> To Freeze <br>" +
+    "<b>C - </b> To clear frozen objects <br>");
+
+  d3.select("#trialInfo").html("");
+  var svg = d3.select("#trialsChart").append("svg")
+    .attr("id", "train")
+    .attr("width", width)
+    .attr("height", height);
+
+  svg.append("rect")
+             .attr("x", 0)
+             .attr("y", 0)
+             .attr("width", width)
+             .attr("height", height)
+             .style("stroke", "black")
+             .style("fill", "none")
+             .style("stroke-width", "1px");
+
+  var g = svg.append("g").attr("class", "trainButton");
+  var trainCircle = g.append("circle")
+    .attr("cx", width/2)
+    .attr("cy", height/2)
+    .attr("r", 50)
+    .style("fill", "#4CAF50");
+
+  var trainText = g.append("text")
+    .attr("x", width/2 - 40)
+    .attr("y", height/2 + 20)
+    .style("font-family", "sans-serif")
+    .style("font-size", "50px")
+    .style("fill", "#F4F4F4")
+    .style("cursor", "default")
+    .text("HA");
+
+  g.on("click.train", function() {
+    g.on("click.train", null);
+    svg.remove();
+    d3.select('#trialsChart').html('');
+    createGo();
+  });
+};
+
+function loadNextTrial() {
+  //load and display trial information
+  var _freeze = experiment_sequence[experiment_number].freezeType;
+  var _trail= experiment_sequence[experiment_number].trailType;
+  var _speed = experiment_sequence[experiment_number].speed;
+  var _density = experiment_sequence[experiment_number].density;
+
+  d3.select("#trainInfo").html("");
+
+  d3.select("#trialInfo").html(
+    "<b>Freeze Selector: </b>" + _freeze + "<br>" +
+    "<b>Trail Type: </b>" + _trail + "<br>" +
+    "<b>Speed: </b>" + _speed + "<br>" +
+    "<b>Density: </b>" + _density + "<br>"
+  );
+
+  if (previousFrz != _freeze || previousTrail != _trail) {
+    //DO PRACTICE
+    previousFrz = _freeze;
+    previousTrail = _trail;
+    createTrainer();
+    setSelectors("normal", _freeze);
+  } else {
+    //DO REAL TRIAL
+    createChart(_speed, _trail);
+    setSelectors("normal", _freeze);
+  }
 }
 
 function goToNext() {
@@ -250,6 +370,21 @@ function goToNext() {
 }
 
 function addTrialData(err, time) {
-  data.trials[trialNumber] = { "id": trialNumber, "errors": err, "time": time };
+  // data.trials[experiment_number] = { "id": trialNumber, "errors": err, "time": time };
+  var _freeze = experiment_sequence[experiment_number].freezeType;
+  var _trail = experiment_sequence[experiment_number].trailType;
+  var _speed = experiment_sequence[experiment_number].speed;
+  var _density = experiment_sequence[experiment_number].density;
+  var id_time = "time_" + _freeze + "_" + _trail + "_" + _speed + "_" + _density + "_" + trialNumber;
+  var id_err = "errors_" + _freeze + "_" + _trail + "_" + _speed + "_" + _density + "_" + trialNumber;
+  //data[id_time] = { "id": trialNumber, "errors": err, "time": time };
+  data[id_err] = err;
+  data[id_time] = time;
+  // console.log(JSON.stringify(data, null, '\t'));
   trialNumber += 1;
+  if (trialNumber >= numTrials) {
+    trialNumber = 0;
+    experiment_number += 1;
+    load();
+  }
 }
