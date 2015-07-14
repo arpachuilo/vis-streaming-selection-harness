@@ -25,8 +25,8 @@ body {
 }
 
 .snapshot {
-	stroke: #FFA300;
-	fill: #FFA300;
+	stroke: #000000;
+	fill: #FFFFFF;
 	clip-path: url(#StreamScatterPlotClip);
 }
 
@@ -37,14 +37,14 @@ body {
 }
 
 .primary {
-	stroke: #E91E63;
-	fill: #E91E63;
+	stroke: #F44336;
+	fill: #F44336;
 	clip-path: url(#StreamScatterPlotClip);
 }
 
 .secondary {
-	stroke: #0288D1;
-	fill: #0288D1;
+	stroke: #000000;
+	fill: #FFFFFF;
 	clip-path: url(#StreamScatterPlotClip);
 }
 
@@ -58,28 +58,41 @@ body {
 	stroke-opacity: 0.5;
 }
 
-
-.trail {
-	stroke: #FFA300;
+.point.target,
+.snapshot.target {
+	stroke: #8BC34A;
+	fill: #8BC34A;
 	clip-path: url(#StreamScatterPlotClip);
 }
 
-.point.target,
-.snapshot.target,
 #targetTrail {
-	stroke: #50DC64;
-	fill: #50DC64;
+	stroke: #8BC34A;
+	clip-path: url(#StreamScatterPlotClip);
+}
+
+#trail {
+	stroke: #CFD8DC;
+	clip-path: url(#StreamScatterPlotClip);
+}
+
+#secondary_trail {
+	stroke: #CFD8DC;
+	clip-path: url(#StreamScatterPlotClip);
+}
+
+#primary_trail {
+	stroke: #F44336;
 	clip-path: url(#StreamScatterPlotClip);
 }
 
 .bubble {
-	fill: lightgrey;
+	fill: #607D8B;
 	fill-opacity: 0.5;
 	clip-path: url(#freezeClip);
 }
 
 .freezeRegion {
-	fill: lightgrey;
+	fill: #607D8B;
 	fill-opacity: 0.5;
 	clip-path: url(#StreamScatterPlotClip);
 }
