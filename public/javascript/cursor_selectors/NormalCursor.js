@@ -53,11 +53,11 @@ function NormalCursor(selection) {
 				}
 			});
 
+		//Having this line inside 'target != null' causes sticky targeting
+		d3.selectAll(targets + ".target")
+			.attr("class", function() { return d3.select(this).attr("class").slice(0, -7); });
 		//Set class of  target
 		if (target != null) {
-			//Having this line inside check causes sticky targeting
-			d3.selectAll(targets + ".target")
-				.attr("class", function() { return d3.select(this).attr("class").slice(0, -7); });
 			target
 				.attr("class", target.attr("class") + " target");
 		}

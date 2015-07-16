@@ -61,7 +61,7 @@ d3.json("data/sequence.json", function(error, data) {
     sequence = data.sequence;
 
     var n = 0;
-    for (i = 0; i < 5; i++) {
+    for (i = 0; i < sequence.length; i++) {
         var freezeType = sequence[i];
         for (j = 0; j < 3; j++) {
             var trailType = trail[j];
@@ -119,9 +119,9 @@ function createChart(_speed, _trail) {
 
   //Set speed modifier
   if (_speed === "high") {
-    StreamScatterPlot.setClockDrift(50);
+    StreamScatterPlot.setClockDrift(300);
   } else {
-    StreamScatterPlot.setClockDrift(0);
+    StreamScatterPlot.setClockDrift(300);
   }
 
   //Set trail modifier
@@ -289,6 +289,7 @@ function createQuestion(err, time, dis, got) {
         var ans = d3.select(this).data();
 
         numpad.on("click.numpad", null);
+        text.on("click.numpadText", null);
         svg.remove();
         d3.select("#trialsChart").html("");
 
@@ -299,11 +300,10 @@ function createQuestion(err, time, dis, got) {
             );
         }
 
-        if (experiment_number < experiment_length) {
+        if (experiment_number != experiment_length) {
             addTrialData(err, time, dis, ans[0], got);
             createGo();
         } else {
-            addTrialData(err, time, dis, ans[0], got);
             goToNext();
         }
     });
@@ -312,6 +312,7 @@ function createQuestion(err, time, dis, got) {
         var ans = d3.select(this).data();
 
         text.on("click.numpadText", null);
+        numpad.on("click.numpad", null);
         svg.remove();
         d3.select("#trialsChart").html("");
 
@@ -322,11 +323,16 @@ function createQuestion(err, time, dis, got) {
             );
         }
 
-        if (experiment_number < experiment_length) {
+        // if (experiment_number == experiment_length && trialNumber + 1 >= numTrials) {
+        //     goToNext();
+        // } else {
+        //     addTrialData(err, time, dis, ans[0], got);
+        //     createGo();
+        // }
+        if (experiment_number != experiment_length) {
             addTrialData(err, time, dis, ans[0], got);
             createGo();
         } else {
-            addTrialData(err, time, dis, ans[0], got);
             goToNext();
         }
     });
@@ -399,7 +405,7 @@ function loadNextTrial() {
         if (practice_number > 3)
             practice_number = 0;
     } else {
-        //LOAD FILE BASED ON DENSITY PARAM
+        //Do some checking to load new file only when density changes or trial number is too high
         load("stream_" + _density + "_density.json", function() {
             createChart(_speed, _trail);
             setSelectors("normal", _freeze);
@@ -435,13 +441,13 @@ function addTrialData(err, time, dis, dis_ans, got) {
         data[id_dis_ans] = dis_ans;
         data[id_clicked] = got;
 
-        // console.log(JSON.stringify(data, null, "\t"));
+    console.log(JSON.stringify(data, null, "\t"));
 
         trialNumber += 1;
-
         if (trialNumber >= numTrials) {
             trialNumber = 0;
             experiment_number += 1;
+            // console.log(experiment_number);
         }
     }
 }
