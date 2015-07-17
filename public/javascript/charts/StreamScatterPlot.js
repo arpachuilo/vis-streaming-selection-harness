@@ -3,6 +3,13 @@ function StreamScatterPlot() {
 	//FOR EXPERIMENTAL REASONS
 	var errors;
 	var time_start;
+	var dots_clicked;
+	var dots_missed;
+	var click_period;
+
+	//Controls experimental clockdrift
+	var clockdrift = 0;
+	var drift_timer = 0;
 
 	//Default values for chart
 	var margin = {top: 10, right: 10, bottom: 30, left: 0},
@@ -33,9 +40,6 @@ function StreamScatterPlot() {
 	//Used to kill step timer
 	var end = false;
 
-	//Controls experimental clockdrift
-	var clockdrift = 0;
-
 	//Selectors, dataset, and points to grab
 	var svg,
 		defs,
@@ -50,6 +54,11 @@ function StreamScatterPlot() {
 		//Init experimental things
 		time_start = +new Date();
 		errors = 0;
+		dots_clicked = 0;
+		dots_missed = 0;
+		click_period = Math.floor((Math.random() * 5) + 5) * 1000;
+
+		drift_timer = +new Date();
 
 		selection.each(function(data) {
 			//Map corresponding data points x to d[0] and y to d[1]
@@ -180,37 +189,33 @@ function StreamScatterPlot() {
 			});
 
 			//Set on click handler
-			svg.on("mousedown.StreamScatterPlot", function(d, i) {
+			svg.on("mousedown.StreamScatterPlot", function() {
 				var target = d3.select(targetName);
 				if (d3.select(targetName).empty())
 					target = null;
 				if (trailsAllowed) var targetTrail = d3.select("#targetTrail");
 				if (target != null && !d3.event.shiftKey && !end) {
+					//Point animation
+					target.transition().duration(0).transition().duration(500).ease("bounce")
+							.style("fill-opacity", 0.0)
+						.transition().duration(500).ease("bounce")
+							.style("fill-opacity", 1.0);
+
+					//Trail animation
+					if (trailsAllowed) {
+						targetTrail.transition().duration(500).ease("bounce")
+								.style("stroke-opacity", 0.0)
+							.transition().duration(500).ease("bounce")
+								.style("stroke-opacity", 1.0);
+					}
+
+					//Start Experiment Stuff
 					if (target.attr("class").includes("target") && target.attr("class").includes("primary")) {
-						var time_end = +new Date();
-						var trial_time = time_end - time_start;
-						var dis = chart.getDistractors();
-						chart.destroy();
-						createQuestion(errors, trial_time, dis, true);
+						dots_clicked += 1;
+						StreamScatterPlot.newRedDot(target);
 					} else {
 						errors += 1;
-						x = +target.attr("x");
-						y = +target.attr("y");
-
-						//Point animation
-						target.transition().duration(0).transition().duration(500).ease("bounce")
-								.style("fill-opacity", 0.0)
-							.transition().duration(500).ease("bounce")
-								.style("fill-opacity", 1.0);
-
-						//Trail animation
-						if (trailsAllowed) {
-							targetTrail.transition().duration(500).ease("bounce")
-									.style("stroke-opacity", 0.0)
-								.transition().duration(500).ease("bounce")
-									.style("stroke-opacity", 1.0);
-						}
-					}
+					} //End Experiment Stuff
 				}
 			});
 
@@ -355,10 +360,12 @@ function StreamScatterPlot() {
 
 		//Simulates clock drifting
 		//NOTE: Should never really be used expect when having to do weird things for experimental reasons
-		dataset.forEach(function(d, i) {
-			d[0] -= clockdrift;
-		});
-
+		if ( ((+new Date()) - drift_timer) > 1) {
+			drift_timer = +new Date();
+			dataset.forEach(function(d, i) {
+				d[0] -= clockdrift;
+			});
+		}
 		//Bind only data that would show up on screen to points
 		var subset = dataset.filter(function(d, i) { return d[0] < now; } );
 		points = gData.selectAll(".point").data(subset, function(d, i) { return d; });
@@ -370,11 +377,8 @@ function StreamScatterPlot() {
 				if (this.getAttribute("x") < margin.left - pWidth){
 					dataset.splice(dataset.indexOf(d), 1);
 					if (this.getAttribute("class") == "primary point") {
-						var time_end = +new Date();
-						var trial_time = time_end - time_start;
-						var dis = chart.getDistractors();
-						chart.destroy();
-						createQuestion(errors, trial_time, dis, false);
+						dots_missed += 1;
+						StreamScatterPlot.newRedDot();
 					}
 				}
 			});
@@ -412,6 +416,13 @@ function StreamScatterPlot() {
 	chart.start = function() {
 		end = false;
 		d3.timer(function() {
+			var time_end = +new Date();
+			var trial_time = time_end - time_start;
+			if(trial_time >= click_period) {
+				var dis = chart.getDistractors();
+				chart.destroy();
+				createQuestion(errors, trial_time, dis, click_period, dots_clicked, dots_missed);
+			}
 			if(!paused) {
 				chart.step();
 			}
@@ -491,6 +502,46 @@ function StreamScatterPlot() {
 
 	StreamScatterPlot.getTrailsAllowed = function() {
 		return trailsAllowed;
+	}
+
+	StreamScatterPlot.newRedDot = function(target) {
+		var prev_id = null;
+
+		if (target != null) {
+			if (target.attr("class").includes("snapshot")) {
+				var pt = d3.select(".primary.point")
+					.attr("class", "point");
+				target.attr("class", target.attr("class").replace("primary", ""));
+				pt.datum()[2] = "point";
+				// dataset[dataset.indexOf(pt)][2] = "point";
+				prev_id = pt.datum()[3];
+			} else {
+				target.attr("class", "point");
+				target.datum()[2] = "point";
+				// dataset[target.datum()[3]][2] = "point";
+				prev_id = target.datum()[3];
+			}
+		}
+
+		var new_id = prev_id;
+		var pt = null;
+		while (prev_id == new_id) {
+			var points = d3.selectAll(".point");
+			var sz = points[0].length;
+			new_index = Math.floor((Math.random() * sz*2/3) + sz/3);
+			pt = d3.select(points[0][new_index]);
+			new_id = pt.datum()[3];
+		}
+
+		pt.attr("class", "primary point");
+		pt.datum()[2] = "primary point";
+		// dataset[pt.datum()[3]][2] = "primary point";
+
+		if (!d3.select(".i" + new_id + ".snapshot").empty()) {
+			var snap = d3.select(".i" + new_id + ".snapshot");
+			snap
+				.attr("class", "primary " + snap.attr("class"))
+		};
 	}
 
 	return chart;
