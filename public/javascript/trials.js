@@ -65,6 +65,10 @@ d3.json("data/sequence.json", function(error, data) {
         //3X Trail
         for (j = 0; j < 3; j++) {
             var trailType = trail[j];
+            if (freezeType == "none") {
+                trailType = "none";
+                j = 4;
+            }
             //2X Speed by 2X Density
             for (k = 0; k < 4; k++) {
                 var speed = speed_density[k].speed;
@@ -78,7 +82,6 @@ d3.json("data/sequence.json", function(error, data) {
             }
         }
     }
-
     experiment_length = experiment_sequence.length;
     loadNextTrial();
 });
@@ -286,30 +289,11 @@ function createQuestion(err, time, dis, click_period, dots_c, dots_m) {
         .style("fill", "#F4F4F4")
         .style("cursor", "default");
 
-    numpad.on("click.numpad", function(d, i) {
-        var ans = d3.select(this).data();
+    numpad.on("click.numpad", click_handler)
 
-        numpad.on("click.numpad", null);
-        text.on("click.numpadText", null);
-        svg.remove();
-        d3.select("#trialsChart").html("");
+    text.on("click.numpadText", click_handler);
 
-        if (practice) {
-            d3.select(".question_info").text(
-                "Distractors On Screen: " + dis +
-                " Your answer: " + ans[0]
-            );
-        }
-
-        if (experiment_number != experiment_length) {
-            addTrialData(err, time, dis, ans[0], click_period, dots_c, dots_m);
-            createGo();
-        } else {
-            goToNext();
-        }
-    });
-
-    text.on("click.numpadText", function(d, i) {
+    function click_handler() {
         var ans = d3.select(this).data();
 
         text.on("click.numpadText", null);
@@ -324,41 +308,53 @@ function createQuestion(err, time, dis, click_period, dots_c, dots_m) {
             );
         }
 
-        // if (experiment_number == experiment_length && trialNumber + 1 >= numTrials) {
-        //     goToNext();
-        // } else {
-        //     addTrialData(err, time, dis, ans[0], click_period, dots_c, dots_m);
-        //     createGo();
-        // }
-        if (experiment_number != experiment_length) {
+        if (experiment_number + 1 == experiment_length && trialNumber + 1 >= numTrials) {
+            addTrialData(err, time, dis, ans[0], click_period, dots_c, dots_m);
+            goToNext();
+        } else {
             addTrialData(err, time, dis, ans[0], click_period, dots_c, dots_m);
             createGo();
-        } else {
-            goToNext();
         }
-    });
+    }
 }
 
-function createTrainer() {
+function createPractice() {
     var _freeze = experiment_sequence[experiment_number].freezeType;
     var _trail= experiment_sequence[experiment_number].trailType;
 
     d3.select("#trainInfo").append("div")
         .attr("class", "question_info");
 
-    d3.select("#trainInfo").append("div")
+    var trainInfoBox = d3.select("#trainInfo").append("div")
         .attr("class", "training_info")
-        .html("<b>Freeze Technique: " + _freeze + "<br>" +
-                "Trail Style: " + _trail + "</b><br>" +
-                "'Shift' to activate freeze; 'C' to clear frozen elements" + "<br>");
+        .attr("display", "inline-block")
+        .attr("overflow", "auto")
+        .attr("width", "100%")
+        .attr("white-space", "nowrap");
 
-    var button = d3.select("#trainInfo").append("button")
-            .attr("id", "done_training")
+    var text = trainInfoBox.append("div")
+        .attr("class", "train_text")
+        .attr("width", "50%")
+        .attr("display", "inline-block");
+
+    text.append("p")
+            .text("Freeze Selector: " + _freeze)
+    text.append("p")
+            .text("Trail Type: " + _trail);
+
+
+    var button = trainInfoBox.append("div")
+        .attr("id", "train_button")
+        .attr("width", "50%")
+        .attr("display", "inline-block");
+
+    button
+        .append("button")
             .text("DONE TRAINING");
 
     d3.select("#trialInfo").html("");
 
-    button.on("click", function() {
+    button.on("click.train", function() {
         chart.destroy();
         button.on("click.train", null);
         d3.select("#trialsChart").html("");
@@ -391,9 +387,8 @@ function loadNextTrial() {
         previousTrail = _trail;
         practice = true;
         practice_number = Math.floor((Math.random() * 3))
-        createTrainer()
+        createPractice()
     }
-
 
     if (practice) {
         _practice_speed = speed_density[practice_number].speed;
@@ -436,7 +431,7 @@ function addTrialData(err, time, dis, dis_ans, click_period, dots_c, dots_m) {
         var id_dis_ans = "distractors_answer_" + t_id;
         var id_dots_c = "dots_clicked_" + t_id;
         var id_dots_m = "dots_missed_" + t_id;
-        var id_click_period = "click_time_period" + t_id;
+        var id_click_period = "click_time_period_" + t_id;
 
         data[id_err] = err;
         data[id_time] = time;
@@ -446,11 +441,9 @@ function addTrialData(err, time, dis, dis_ans, click_period, dots_c, dots_m) {
         data[id_dots_m] = dots_m;
         data[id_click_period] = click_period;
 
-
-    console.log(JSON.stringify(data, null, "\t"));
-
         trialNumber += 1;
         if (trialNumber >= numTrials) {
+            console.log(JSON.stringify(data, null, "\t"));
             trialNumber = 0;
             experiment_number += 1;
         }
