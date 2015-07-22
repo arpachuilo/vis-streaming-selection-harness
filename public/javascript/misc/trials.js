@@ -1,6 +1,8 @@
 //Hold data collected
 var data = {};
+var worker_id = experimentr.workerId();
 
+var stream_file;
 //Hold per combination trial numbers
 var trialNumber = 0;
 var numTrials = 0;
@@ -11,6 +13,8 @@ var dataset;
 //Holds combination number
 var experiment_number = 0;
 var experiment_length = 0;
+
+var global_trial_id = 0;
 
 var practice_number = 0;
 
@@ -25,7 +29,7 @@ var chart = StreamScatterPlot()
     .width(width)
     .height(height)
     .allowZoom(false)
-    .allowPause(false)
+    .allowPause(true)
     .allowTrails(false);
 
 var cursorFunc = null;
@@ -213,47 +217,50 @@ function setSelectors(cursorType, freezeType) {
 
 //Loads up chart streaming once GO is clicked
 function createGo() {
-  var svg = d3.select("#trialsChart").append("svg")
-    .attr("id", "go")
-    .attr("width", width)
-    .attr("height", height);
+    if (practice) {
+        d3.select("#trialsChart").html("");
+        loadNextTrial();
+        return;
+    }
+    var svg = d3.select("#trialsChart").append("svg")
+        .attr("id", "go")
+        .attr("width", width)
+        .attr("height", height);
 
-  svg.append("rect")
-             .attr("x", 0)
-             .attr("y", 0)
-             .attr("width", width)
-             .attr("height", height)
-             .style("stroke", "black")
-             .style("fill", "none")
-             .style("stroke-width", "1px");
+    svg.append("rect")
+        .attr("x", 0)
+        .attr("y", 0)
+        .attr("width", width)
+        .attr("height", height)
+        .style("stroke", "black")
+        .style("fill", "none")
+        .style("stroke-width", "1px");
 
-  var g = svg.append("g").attr("class", "goButton");
-  var goCircle = g.append("circle")
-    .attr("cx", width/2)
-    .attr("cy", height/2)
-    .attr("r", 50)
-    .style("fill", "#8BC34A");
+    var g = svg.append("g").attr("class", "goButton");
+    var goCircle = g.append("circle")
+        .attr("cx", width/2)
+        .attr("cy", height/2)
+        .attr("r", 50)
+        .style("fill", "#8BC34A");
 
-  var goText = g.append("text")
-    .attr("x", width/2 - 40)
-    .attr("y", height/2 + 20)
-    .style("font-family", "sans-serif")
-    .style("font-size", "50px")
-    .style("fill", "#F4F4F4")
-    .style("cursor", "default")
-    .text("GO");
+    var goText = g.append("text")
+        .attr("x", width/2 - 40)
+        .attr("y", height/2 + 20)
+        .style("font-family", "sans-serif")
+        .style("font-size", "50px")
+        .style("fill", "#F4F4F4")
+        .style("cursor", "default")
+        .text("GO");
 
-  g.on("click.go", function() {
-    g.on("click.go", null);
-    svg.remove();
-    d3.select("#trialsChart").html("");
-    loadNextTrial();
-  });
+    g.on("click.go", function() {
+        g.on("click.go", null);
+        svg.remove();
+        d3.select("#trialsChart").html("");
+        loadNextTrial();
+    });
 }
 
-//Loads up secondary task
-//If last trial continues to closing questionnaire
-//Else pass over to secondary task
+//Loads up secondary task question
 function createQuestion(err, time, dis, click_period, dots_c, dots_m) {
     var svg = d3.select("#trialsChart").append("svg")
         .attr("id", "question")
@@ -269,42 +276,55 @@ function createQuestion(err, time, dis, click_period, dots_c, dots_m) {
         .style("fill", "none")
         .style("stroke-width", "1px");
 
-    var numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-    var rows = 3;
-    var cols = 3;
+    var numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
     var g = svg.append("g").attr("class", "questionNumpad");
-    var numpad = g.selectAll("nums").data(numbers);
-    var text = g.selectAll("numtext").data(numbers);
+    var numpad = g.selectAll(".numpad").data(numbers);
+    var numpadText = g.selectAll(".numpadText").data(numbers);
+
+
     numpad.enter().append("rect")
-        .attr("x", function(d, i) { return width/2 - cols*50/2 + (i%cols)*50; })
-        .attr("y", function(d, i) { return height/2 - rows*50/2 + Math.trunc(i/rows)*50; })
-        .attr("width", 40)
-        .attr("height", 40)
+        .attr("class", "numpad")
+        .attr("x", function(d, i) { return width/2 - numbers.length/2 * 40 + i*40; })
+        .attr("y", height/2)
+        .attr("width", 35)
+        .attr("height", 35)
         .style("fill", "#E57373");
 
-    text.enter().append("text")
+    numpadText.enter().append("text")
+        .attr("class", "numpadText")
         .text(function(d, i) { return d; } )
-        .attr("x", function(d, i) { return width/2 - cols*40/2 + (i%cols)*50; })
-        .attr("y", function(d, i) { return height/2 - rows*40/2 + Math.trunc(i/rows)*50; })
+        .attr("x", function(d, i) { return width/2 - numbers.length/2 * 40 + i*40 + 35/2; })
+        .attr("y", height/2 + 35/2 + 12/2)
         .style("fill", "#F4F4F4")
-        .style("cursor", "default");
+        .style("cursor", "default")
+        .style("text-anchor", "middle");
+
+    var question = g.append("text")
+        .text("How many blue dots were on the screen?")
+        .attr("x", width/2)
+        .attr("y", height/2 - 35)
+        .style("fill", "#0F0F0F")
+        .style("cursor", "default")
+        .style("font-size", "25")
+        .style("text-anchor", "middle");
 
     numpad.on("click.numpad", click_handler)
 
-    text.on("click.numpadText", click_handler);
+    numpadText.on("click.numpadText", click_handler);
 
     function click_handler() {
         var ans = d3.select(this).data();
 
-        text.on("click.numpadText", null);
+        numpadText.on("click.numpadText", null);
         numpad.on("click.numpad", null);
         svg.remove();
         d3.select("#trialsChart").html("");
 
         if (practice) {
-            d3.select("#question_info").text(
-                "Distractors On Screen: " + dis +
-                " Your answer: " + ans[0]
+            d3.select("#question_info").html(
+                "<b>Distractors that were on screen: </b>" + dis +
+                "<b><br>Your answer: </b>" + ans[0] +
+                "<b><br>Number of dots you clicked: </b>" + dots_c
             );
         }
 
@@ -318,9 +338,66 @@ function createQuestion(err, time, dis, click_period, dots_c, dots_m) {
     }
 }
 
+function startPractice(callback) {
+    var svg = d3.select("#trialsChart").append("svg")
+      .attr("id", "go")
+      .attr("width", width)
+      .attr("height", height);
+
+    svg.append("rect")
+               .attr("x", 0)
+               .attr("y", 0)
+               .attr("width", width)
+               .attr("height", height)
+               .style("stroke", "black")
+               .style("fill", "none")
+               .style("stroke-width", "1px");
+
+   var g = svg.append("g").attr("class", "practice");
+   var practiceBtn = g.append("rect")
+       .attr("x", width/4)
+       .attr("y", height/4)
+       .attr("rx", 100)
+       .attr("ry", 100)
+       .attr("width", width/2)
+       .attr("height", height/2)
+       .style("fill", "#8BC34A");
+
+   var practiceBtn = g.append("text")
+       .attr("x", width/2)
+       .attr("y", height/2 + 50/2)
+       .style("font-family", "sans-serif")
+       .style("font-size", "50px")
+       .style("fill", "#F4F4F4")
+       .style("cursor", "default")
+       .style("text-anchor", "middle")
+       .text("PRACTICE");
+
+       g.on("click.practice", function() {
+           g.on("click.practice", null);
+           svg.remove();
+           callback();
+       });
+}
+
 function createPractice() {
     var _freeze = experiment_sequence[experiment_number].freezeType;
     var _trail= experiment_sequence[experiment_number].trailType;
+
+    var instructions = d3.select("#instructions");
+    var instructionsText;
+    if (_freeze === "FreezeWholeScreen") {
+        instructionsText = "<h3>Freeze Whole Screen</h3><p> The freeze region for this technique is the whole screen and therefore no highlighted region will be displayed.</p><img src='images/freeze_whole.png'><p><b>'Shift'</b> to freeze the dots inside the highlighted region.</p><p><b>'C'</b> to clear the dots you froze previously.</p>";
+    } else if (_freeze === "FreezeTrajectory") {
+        instructionsText = "<h3>Freeze Trajectory</h3><p> The highlighted region for this technique is a cone/flashlight like region drawn in the direction of your cursors movement.</p><img src='images/freeze_trajectory.png'><p><b>'Shift'</b> to freeze the dots inside the highlighted region.</p><p><b>'C'</b> to clear the dots you froze previously.</p>"
+    } else if (_freeze === "FreezeAroundClosest") {
+        instructionsText = "<h3>Freeze Around Closest</h3><p> The highlighted region for this technique is a circle created around the closest dot/square to your cursor.</p><img src='images/freeze_closest.png'><p><b>'Shift'</b> to freeze the dots inside the highlighted region.</p><p><b>'C'</b> to clear the dots you froze previously.</p>";
+    } else if (_freeze === "FreezeAroundCursor") {
+        instructionsText = "<h3>Freeze Around Cursor</h3><p> The highlighted region for this technique is a circle created around your cursor.</p><img src='images/freeze_cursor.png'><p><b>'Shift'</b> to freeze the dots inside the highlighted region.</p><p><b>'C'</b> to clear the dots you froze previously.</p>";
+    } else if (_freeze === "none") {
+        instructionsText = "<h3>No Freeze</h3><p>No freeze technique to aid you.</p><img src='images/freeze_none.png'>";
+    }
+    instructions.html(instructionsText);
 
     d3.select("#trainInfo").append("div")
         .attr("id", "question_info");
@@ -331,10 +408,10 @@ function createPractice() {
     var text = trainInfoBox.append("div")
         .attr("class", "train_text");
 
-    text.append("p")
-            .text("Freeze Selector: " + _freeze)
-    text.append("p")
-            .text("Trail Type: " + _trail);
+    text.html(
+        "<b>Freeze Selector: </b>" + _freeze + "<br>" +
+        "<b>Trail Type: </b>" + _trail + "<br>"
+    )
 
     var button = trainInfoBox.append("div")
         .attr("id", "train_button");
@@ -350,6 +427,7 @@ function createPractice() {
         button.on("click.train", null);
         d3.select("#trialsChart").html("");
         d3.select("#trainInfo").html("");
+        d3.select("#instructions").html("");
         practice = false;
         createGo();
     });
@@ -367,9 +445,9 @@ function loadNextTrial() {
 
         d3.select("#trialInfo").html(
         "<b>Freeze Selector: </b>" + _freeze + "<br>" +
-        "<b>Trail Type: </b>" + _trail + "<br>" +
-        "<b>Speed: </b>" + _speed + "<br>" +
-        "<b>Density: </b>" + _density + "<br>"
+        "<b>Trail Type: </b>" + _trail + "<br>"// +
+        // "<b>Speed: </b>" + _speed + "<br>" +
+        // "<b>Density: </b>" + _density + "<br>"
         );
     }
 
@@ -384,32 +462,30 @@ function loadNextTrial() {
     if (practice) {
         _practice_speed = speed_density[practice_number].speed;
         _practice_density = speed_density[practice_number].density;
-        load("practice_" + _practice_density + "_density.json", function() {
-            createChart(_practice_speed, _trail);
-            setSelectors("bubble", _freeze);
+        startPractice(function() {
+            load("practice_" + _practice_density + "_density.json", function() {
+                createChart(_practice_speed, _trail);
+                setSelectors("bubble", _freeze);
+            });
         });
         practice_number += 1;
         if (practice_number > 3)
             practice_number = 0;
     } else {
         //Do some checking to load new file only when density changes or trial number is too high
-        load("stream_" + _density + "_density.json", function() {
+        var setNumber = Math.floor((Math.random() * 10) + 1)
+        console.log(setNumber);
+        setNumber = 1;
+        stream_file = "stream_" + _density + "_density_" + setNumber + ".json";
+        load(stream_file, function() {
             createChart(_speed, _trail);
             setSelectors("bubble", _freeze);
         });
     }
 }
 
-function goToNext() {
-    experimentr.endTimer("all_trials");
-    experimentr.addData(data);
-    experimentr.next();
-}
-
 function addTrialData(err, time, dis, dis_ans, click_period, dots_c, dots_m) {
     if (!practice) {
-
-        var worker_id = experimentr.workerId();
 
         var _freeze = experiment_sequence[experiment_number].freezeType;
         var _trail = experiment_sequence[experiment_number].trailType;
@@ -418,14 +494,18 @@ function addTrialData(err, time, dis, dis_ans, click_period, dots_c, dots_m) {
 
         var t_id = _freeze + "_" + _trail + "_" + _speed + "_" + _density + "_" + trialNumber;
 
-        var id_time = worker_id + "_time_" + t_id;
+        var id_glob = worker_id + "_global_id_" + t_id;
+        var id_file = worker_id + "_file_" + t_id;
         var id_err = worker_id + "_errors_" + t_id;
+        var id_time = worker_id + "_time_" + t_id;
         var id_dis = worker_id + "_num_distractors_" + t_id;
         var id_dis_ans = worker_id + "_distractors_answer_" + t_id;
         var id_dots_c = worker_id + "_dots_clicked_" + t_id;
         var id_dots_m = worker_id + "_dots_missed_" + t_id;
         var id_click_period = worker_id + "_click_time_period_" + t_id;
 
+        data[id_glob] = global_trial_id;
+        data[id_file] = stream_file;
         data[id_err] = err;
         data[id_time] = time;
         data[id_dis] = dis;
@@ -434,11 +514,18 @@ function addTrialData(err, time, dis, dis_ans, click_period, dots_c, dots_m) {
         data[id_dots_m] = dots_m;
         data[id_click_period] = click_period;
 
+        global_trial_id += 1;
         trialNumber += 1;
+        console.log(JSON.stringify(data, null, "\t"));
         if (trialNumber >= numTrials) {
-            console.log(JSON.stringify(data, null, "\t"));
             trialNumber = 0;
             experiment_number += 1;
         }
     }
+}
+
+function goToNext() {
+    experimentr.endTimer("all_trials");
+    experimentr.addData(data);
+    experimentr.next();
 }
