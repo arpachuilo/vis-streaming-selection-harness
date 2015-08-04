@@ -1,0 +1,273 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'node', '/Users/ap2/homebrew/bin/npm', '-g', 'install', 'gc' ]
+2 info using npm@2.10.1
+3 info using node@v0.12.4
+4 verbose node symlink /Users/ap2/homebrew/bin/node
+5 verbose install initial load of /Users/ap2/homebrew/lib/package.json
+6 verbose readDependencies loading dependencies from /Users/ap2/homebrew/lib/package.json
+7 silly cache add args [ 'gc', null ]
+8 verbose cache add spec gc
+9 silly cache add parsed spec { raw: 'gc',
+9 silly cache add   scope: null,
+9 silly cache add   name: 'gc',
+9 silly cache add   rawSpec: '',
+9 silly cache add   spec: '*',
+9 silly cache add   type: 'range' }
+10 silly addNamed gc@*
+11 verbose addNamed "*" is a valid semver range for gc
+12 silly addNameRange { name: 'gc', range: '*', hasData: false }
+13 silly mapToRegistry name gc
+14 silly mapToRegistry using default registry
+15 silly mapToRegistry registry https://registry.npmjs.org/
+16 silly mapToRegistry uri https://registry.npmjs.org/gc
+17 verbose addNameRange registry:https://registry.npmjs.org/gc not in flight; fetching
+18 verbose request uri https://registry.npmjs.org/gc
+19 verbose request no auth needed
+20 info attempt registry request try #1 at 12:15:30
+21 verbose request id 340052d4cc3d4233
+22 verbose etag "8QXP868XS9ZCFU78KB7NAGJGG"
+23 http request GET https://registry.npmjs.org/gc
+24 http 304 https://registry.npmjs.org/gc
+25 silly get cb [ 304,
+25 silly get   { date: 'Tue, 04 Aug 2015 16:15:31 GMT',
+25 silly get     via: '1.1 varnish',
+25 silly get     'cache-control': 'max-age=60',
+25 silly get     etag: '"8QXP868XS9ZCFU78KB7NAGJGG"',
+25 silly get     age: '0',
+25 silly get     connection: 'keep-alive',
+25 silly get     'x-served-by': 'cache-atl6222-ATL',
+25 silly get     'x-cache': 'MISS',
+25 silly get     'x-cache-hits': '0',
+25 silly get     'x-timer': 'S1438704931.620451,VS0,VE88',
+25 silly get     vary: 'Accept' } ]
+26 verbose etag https://registry.npmjs.org/gc from cache
+27 verbose get saving gc to /Users/ap2/.npm/registry.npmjs.org/gc/.cache.json
+28 silly addNameRange number 2 { name: 'gc', range: '*', hasData: true }
+29 silly addNameRange versions [ 'gc', [ '0.0.2' ] ]
+30 silly addNamed gc@0.0.2
+31 verbose addNamed "0.0.2" is a plain semver version for gc
+32 silly cache afterAdd gc@0.0.2
+33 verbose afterAdd /Users/ap2/.npm/gc/0.0.2/package/package.json not in flight; writing
+34 verbose afterAdd /Users/ap2/.npm/gc/0.0.2/package/package.json written
+35 silly install resolved [ { name: 'gc',
+35 silly install resolved     version: '0.0.2',
+35 silly install resolved     description: 'A thin pseudo-wrapper around the v8 garbage collector.',
+35 silly install resolved     main: 'index.js',
+35 silly install resolved     scripts:
+35 silly install resolved      { test: 'tap ./test',
+35 silly install resolved        install: 'node-gyp rebuild',
+35 silly install resolved        uninstall: 'node-gyp clean' },
+35 silly install resolved     repository: { type: 'git', url: 'git://github.com/siddMahen/node-gc.git' },
+35 silly install resolved     bugs:
+35 silly install resolved      { url: 'https://github.com/siddMahen/node-mrpc/issues',
+35 silly install resolved        email: 'siddharth_mahen@me.com' },
+35 silly install resolved     keywords: [ 'gc', 'garbage', 'collector' ],
+35 silly install resolved     author: { name: 'Siddharth Mahendraker' },
+35 silly install resolved     license: 'MIT',
+35 silly install resolved     gypfile: true,
+35 silly install resolved     devDependencies: { tap: '~0.2.5', weak: '~0.2.1' },
+35 silly install resolved     dependencies: { bindings: '~1.0.0' },
+35 silly install resolved     engines: { node: '>=7.0.0' },
+35 silly install resolved     readme: '# gc\n\nA thin pseudo-wrapper around the `v8` garbage collector.\n\n## Installation\n\nUsing `npm`, do:\n\n```\n$ npm install gc\n```\n\n## Example\n\n```js\nvar gc = require("gc");\n\ngc();\n```\n\n## License\n\n(The MIT License)\n\nCopyright (C) 2012 by Siddharth Mahendraker\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the "Software"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in\nall copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN\nTHE SOFTWARE.\n',
+35 silly install resolved     _id: 'gc@0.0.2',
+35 silly install resolved     dist:
+35 silly install resolved      { shasum: '6afc0caac7ef5759562c0bf9d7cf078ac8c4a90f',
+35 silly install resolved        tarball: 'http://registry.npmjs.org/gc/-/gc-0.0.2.tgz' },
+35 silly install resolved     maintainers: [ [Object] ],
+35 silly install resolved     directories: {},
+35 silly install resolved     _shasum: '6afc0caac7ef5759562c0bf9d7cf078ac8c4a90f',
+35 silly install resolved     _resolved: 'https://registry.npmjs.org/gc/-/gc-0.0.2.tgz',
+35 silly install resolved     _from: 'gc@*',
+35 silly install resolved     homepage: 'https://github.com/siddMahen/node-gc#readme' } ]
+36 info install gc@0.0.2 into /Users/ap2/homebrew/lib
+37 info installOne gc@0.0.2
+38 verbose installOne of gc to /Users/ap2/homebrew/lib not in flight; installing
+39 verbose lock using /Users/ap2/.npm/_locks/gc-97587509eb2510b8.lock for /Users/ap2/homebrew/lib/node_modules/gc
+40 warn engine gc@0.0.2: wanted: {"node":">=7.0.0"} (current: {"node":"0.12.4","npm":"2.10.1"})
+41 silly install write writing gc 0.0.2 to /Users/ap2/homebrew/lib/node_modules/gc
+42 verbose unbuild lib/node_modules/gc
+43 silly gentlyRm /Users/ap2/homebrew/lib/node_modules/gc is being purged from base /Users/ap2/homebrew
+44 verbose gentlyRm don't care about contents; nuking /Users/ap2/homebrew/lib/node_modules/gc
+45 verbose tar unpack /Users/ap2/.npm/gc/0.0.2/package.tgz
+46 verbose tar unpacking to /Users/ap2/homebrew/lib/node_modules/gc
+47 silly gentlyRm /Users/ap2/homebrew/lib/node_modules/gc is being purged
+48 verbose gentlyRm don't care about contents; nuking /Users/ap2/homebrew/lib/node_modules/gc
+49 silly gunzTarPerm modes [ '755', '644' ]
+50 silly gunzTarPerm extractEntry package.json
+51 silly gunzTarPerm extractEntry .npmignore
+52 silly gunzTarPerm extractEntry README.md
+53 silly gunzTarPerm extractEntry index.js
+54 silly gunzTarPerm extractEntry binding.gyp
+55 silly gunzTarPerm extractEntry src/gc.cc
+56 silly gunzTarPerm extractEntry test/basic.js
+57 verbose write writing to /Users/ap2/homebrew/lib/node_modules/gc/package.json
+58 info preinstall gc@0.0.2
+59 verbose readDependencies loading dependencies from /Users/ap2/homebrew/lib/node_modules/gc/package.json
+60 silly prepareForInstallMany adding bindings@~1.0.0 from gc dependencies
+61 verbose readDependencies loading dependencies from /Users/ap2/homebrew/lib/node_modules/gc/package.json
+62 silly cache add args [ 'bindings@~1.0.0', null ]
+63 verbose cache add spec bindings@~1.0.0
+64 silly cache add parsed spec { raw: 'bindings@~1.0.0',
+64 silly cache add   scope: null,
+64 silly cache add   name: 'bindings',
+64 silly cache add   rawSpec: '~1.0.0',
+64 silly cache add   spec: '>=1.0.0 <1.1.0',
+64 silly cache add   type: 'range' }
+65 silly addNamed bindings@>=1.0.0 <1.1.0
+66 verbose addNamed ">=1.0.0 <1.1.0" is a valid semver range for bindings
+67 silly addNameRange { name: 'bindings', range: '>=1.0.0 <1.1.0', hasData: false }
+68 silly mapToRegistry name bindings
+69 silly mapToRegistry using default registry
+70 silly mapToRegistry registry https://registry.npmjs.org/
+71 silly mapToRegistry uri https://registry.npmjs.org/bindings
+72 verbose addNameRange registry:https://registry.npmjs.org/bindings not in flight; fetching
+73 verbose request uri https://registry.npmjs.org/bindings
+74 verbose request no auth needed
+75 info attempt registry request try #1 at 12:15:31
+76 verbose etag "BCS5XYG9ISNJFNKEL5FLOI5HX"
+77 http request GET https://registry.npmjs.org/bindings
+78 http 304 https://registry.npmjs.org/bindings
+79 silly get cb [ 304,
+79 silly get   { date: 'Tue, 04 Aug 2015 16:15:31 GMT',
+79 silly get     via: '1.1 varnish',
+79 silly get     'cache-control': 'max-age=60',
+79 silly get     etag: '"BCS5XYG9ISNJFNKEL5FLOI5HX"',
+79 silly get     age: '26',
+79 silly get     connection: 'keep-alive',
+79 silly get     'x-served-by': 'cache-atl6222-ATL',
+79 silly get     'x-cache': 'HIT',
+79 silly get     'x-cache-hits': '1',
+79 silly get     'x-timer': 'S1438704931.976153,VS0,VE1',
+79 silly get     vary: 'Accept' } ]
+80 verbose etag https://registry.npmjs.org/bindings from cache
+81 verbose get saving bindings to /Users/ap2/.npm/registry.npmjs.org/bindings/.cache.json
+82 silly addNameRange number 2 { name: 'bindings', range: '>=1.0.0 <1.1.0', hasData: true }
+83 silly addNameRange versions [ 'bindings',
+83 silly addNameRange   [ '0.0.1',
+83 silly addNameRange     '0.1.0',
+83 silly addNameRange     '0.1.1',
+83 silly addNameRange     '0.2.0',
+83 silly addNameRange     '0.2.1',
+83 silly addNameRange     '0.2.2',
+83 silly addNameRange     '0.2.3',
+83 silly addNameRange     '0.2.4',
+83 silly addNameRange     '0.3.0',
+83 silly addNameRange     '0.4.0',
+83 silly addNameRange     '1.0.0',
+83 silly addNameRange     '1.1.0',
+83 silly addNameRange     '1.1.1',
+83 silly addNameRange     '1.2.0',
+83 silly addNameRange     '1.2.1' ] ]
+84 silly addNamed bindings@1.0.0
+85 verbose addNamed "1.0.0" is a plain semver version for bindings
+86 silly cache afterAdd bindings@1.0.0
+87 verbose afterAdd /Users/ap2/.npm/bindings/1.0.0/package/package.json not in flight; writing
+88 verbose afterAdd /Users/ap2/.npm/bindings/1.0.0/package/package.json written
+89 silly install resolved [ { name: 'bindings',
+89 silly install resolved     description: 'Helper module for loading your native module\'s .node file',
+89 silly install resolved     keywords: [ 'native', 'addon', 'bindings', 'gyp', 'waf', 'c', 'c++' ],
+89 silly install resolved     version: '1.0.0',
+89 silly install resolved     author:
+89 silly install resolved      { name: 'Nathan Rajlich',
+89 silly install resolved        email: 'nathan@tootallnate.net',
+89 silly install resolved        url: 'http://tootallnate.net' },
+89 silly install resolved     repository:
+89 silly install resolved      { type: 'git',
+89 silly install resolved        url: 'git://github.com/TooTallNate/node-bindings.git' },
+89 silly install resolved     main: './bindings.js',
+89 silly install resolved     _id: 'bindings@1.0.0',
+89 silly install resolved     dist:
+89 silly install resolved      { shasum: 'c3ccde60e9de6807c6f1aa4ef4843af29191c828',
+89 silly install resolved        tarball: 'http://registry.npmjs.org/bindings/-/bindings-1.0.0.tgz' },
+89 silly install resolved     maintainers: [ [Object], [Object] ],
+89 silly install resolved     directories: {},
+89 silly install resolved     _shasum: 'c3ccde60e9de6807c6f1aa4ef4843af29191c828',
+89 silly install resolved     _resolved: 'https://registry.npmjs.org/bindings/-/bindings-1.0.0.tgz',
+89 silly install resolved     _from: 'bindings@>=1.0.0 <1.1.0',
+89 silly install resolved     bugs: { url: 'https://github.com/TooTallNate/node-bindings/issues' },
+89 silly install resolved     readme: 'ERROR: No README data found!',
+89 silly install resolved     homepage: 'https://github.com/TooTallNate/node-bindings#readme' } ]
+90 info install bindings@1.0.0 into /Users/ap2/homebrew/lib/node_modules/gc
+91 info installOne bindings@1.0.0
+92 verbose installOne of bindings to /Users/ap2/homebrew/lib/node_modules/gc not in flight; installing
+93 verbose lock using /Users/ap2/.npm/_locks/bindings-d5147bde0e726c78.lock for /Users/ap2/homebrew/lib/node_modules/gc/node_modules/bindings
+94 silly install write writing bindings 1.0.0 to /Users/ap2/homebrew/lib/node_modules/gc/node_modules/bindings
+95 verbose unbuild lib/node_modules/gc/node_modules/bindings
+96 silly gentlyRm /Users/ap2/homebrew/lib/node_modules/gc/node_modules/bindings is being purged from base /Users/ap2/homebrew
+97 verbose gentlyRm don't care about contents; nuking /Users/ap2/homebrew/lib/node_modules/gc/node_modules/bindings
+98 verbose tar unpack /Users/ap2/.npm/bindings/1.0.0/package.tgz
+99 verbose tar unpacking to /Users/ap2/homebrew/lib/node_modules/gc/node_modules/bindings
+100 silly gentlyRm /Users/ap2/homebrew/lib/node_modules/gc/node_modules/bindings is being purged
+101 verbose gentlyRm don't care about contents; nuking /Users/ap2/homebrew/lib/node_modules/gc/node_modules/bindings
+102 silly gunzTarPerm modes [ '755', '644' ]
+103 silly gunzTarPerm extractEntry package.json
+104 silly gunzTarPerm extractEntry README.md
+105 silly gunzTarPerm extractEntry bindings.js
+106 verbose write writing to /Users/ap2/homebrew/lib/node_modules/gc/node_modules/bindings/package.json
+107 info preinstall bindings@1.0.0
+108 verbose readDependencies loading dependencies from /Users/ap2/homebrew/lib/node_modules/gc/node_modules/bindings/package.json
+109 verbose readDependencies loading dependencies from /Users/ap2/homebrew/lib/node_modules/gc/node_modules/bindings/package.json
+110 silly install resolved []
+111 verbose about to build /Users/ap2/homebrew/lib/node_modules/gc/node_modules/bindings
+112 info build /Users/ap2/homebrew/lib/node_modules/gc/node_modules/bindings
+113 info linkStuff bindings@1.0.0
+114 silly linkStuff bindings@1.0.0 has /Users/ap2/homebrew/lib/node_modules/gc/node_modules as its parent node_modules
+115 silly linkStuff bindings@1.0.0 is part of a global install
+116 silly linkStuff bindings@1.0.0 is installed into a global node_modules
+117 verbose linkBins bindings@1.0.0
+118 verbose linkMans bindings@1.0.0
+119 verbose rebuildBundles bindings@1.0.0
+120 info install bindings@1.0.0
+121 info postinstall bindings@1.0.0
+122 verbose unlock done using /Users/ap2/.npm/_locks/bindings-d5147bde0e726c78.lock for /Users/ap2/homebrew/lib/node_modules/gc/node_modules/bindings
+123 verbose about to build /Users/ap2/homebrew/lib/node_modules/gc
+124 info build /Users/ap2/homebrew/lib/node_modules/gc
+125 info linkStuff gc@0.0.2
+126 silly linkStuff gc@0.0.2 has /Users/ap2/homebrew/lib/node_modules as its parent node_modules
+127 silly linkStuff gc@0.0.2 is part of a global install
+128 silly linkStuff gc@0.0.2 is installed into a global node_modules
+129 silly linkStuff gc@0.0.2 is installed into the top-level global node_modules
+130 verbose linkBins gc@0.0.2
+131 verbose linkMans gc@0.0.2
+132 verbose rebuildBundles gc@0.0.2
+133 verbose rebuildBundles [ 'bindings' ]
+134 info install gc@0.0.2
+135 verbose unsafe-perm in lifecycle true
+136 info gc@0.0.2 Failed to exec install script
+137 verbose unlock done using /Users/ap2/.npm/_locks/gc-97587509eb2510b8.lock for /Users/ap2/homebrew/lib/node_modules/gc
+138 verbose stack Error: gc@0.0.2 install: `node-gyp rebuild`
+138 verbose stack Exit status 1
+138 verbose stack     at EventEmitter.<anonymous> (/Users/ap2/homebrew/lib/node_modules/npm/lib/utils/lifecycle.js:213:16)
+138 verbose stack     at EventEmitter.emit (events.js:110:17)
+138 verbose stack     at ChildProcess.<anonymous> (/Users/ap2/homebrew/lib/node_modules/npm/lib/utils/spawn.js:24:14)
+138 verbose stack     at ChildProcess.emit (events.js:110:17)
+138 verbose stack     at maybeClose (child_process.js:1015:16)
+138 verbose stack     at Process.ChildProcess._handle.onexit (child_process.js:1087:5)
+139 verbose pkgid gc@0.0.2
+140 verbose cwd /Users/ap2/Workspace/vis-streaming-selection
+141 error Darwin 13.4.0
+142 error argv "node" "/Users/ap2/homebrew/bin/npm" "-g" "install" "gc"
+143 error node v0.12.4
+144 error npm  v2.10.1
+145 error code ELIFECYCLE
+146 error gc@0.0.2 install: `node-gyp rebuild`
+146 error Exit status 1
+147 error Failed at the gc@0.0.2 install script 'node-gyp rebuild'.
+147 error This is most likely a problem with the gc package,
+147 error not with npm itself.
+147 error Tell the author that this fails on your system:
+147 error     node-gyp rebuild
+147 error You can get their info via:
+147 error     npm owner ls gc
+147 error There is likely additional logging output above.
+148 verbose exit [ 1, true ]
+149 verbose unbuild lib/node_modules/gc
+150 info preuninstall gc@0.0.2
+151 info uninstall gc@0.0.2
+152 verbose unsafe-perm in lifecycle true
+153 verbose unbuild rmStuff gc@0.0.2 from /Users/ap2/homebrew/lib/node_modules
+154 info postuninstall gc@0.0.2
+155 silly gentlyRm /Users/ap2/homebrew/lib/node_modules/gc is being purged from base /Users/ap2/homebrew
+156 verbose gentlyRm don't care about contents; nuking /Users/ap2/homebrew/lib/node_modules/gc
+157 silly vacuum-fs purging /Users/ap2/homebrew/lib/node_modules/gc
+158 silly vacuum-fs quitting because other entries in /Users/ap2/homebrew/lib/node_modules
