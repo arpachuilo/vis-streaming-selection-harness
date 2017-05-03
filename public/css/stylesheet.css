@@ -97,13 +97,13 @@
 }
 
 .bubble {
-	fill: ##CFD8DC;
+	fill: ##696969;
 	fill-opacity: 0.5;
 	clip-path: url(#freezeClip);
 }
 
 .freezeRegion {
-	fill: #CFD8DC;
+	fill: #696969;
 	fill-opacity: 0.5;
 	clip-path: url(#StreamScatterPlotClip);
 }

@@ -32,22 +32,16 @@ function FreezeWholeScreen(selection) {
 		points
 			.each(function(d, i) {
 				var pt = d3.select(this);
-				var x = +pt.attr("x"),
-						y = +pt.attr("y"),
-						w = +pt.attr("width")
-						h = +pt.attr("height")
-						rx = +pt.attr("rx")
-						ry = +pt.attr("ry");
+				var x = +pt.attr("cx"),
+						y = +pt.attr("cy"),
+						r = +pt.attr("r")
 
 				pt.attr("id", "tagged");
-				gCopies.append("rect").datum(d[3])
+				gCopies.append("circle").datum(d)
 					.attr("class", d[2].replace("point", "") + "i" + d[3] + " snapshot")
-					.attr("width", w)
-					.attr("height", h)
-					.attr("x", x)
-					.attr("y", y)
-					.attr("rx", rx)
-					.attr("ry", ry);
+					.attr("cx", x)
+					.attr("cy", y)
+					.attr("r", r)
 			});
 	};
 

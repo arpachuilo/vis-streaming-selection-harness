@@ -2,6 +2,10 @@ function BubbleCursor(selection) {
 	//Variable to hold previous mouse points for dynamic data
 	var prevMousePt = [0,0];
 
+	if (window.width || window.height) {
+		prevMousePt = [window.width / 2, window.height / 2]
+	}
+
 	//Name of svg element to grab for targets
 	var targets = ".point"
 
@@ -11,15 +15,15 @@ function BubbleCursor(selection) {
 	//Create cursor
 	var cursor = gSelection.append("circle")
 		.attr("class","bubble cursor")
-		.attr("cx",0)
-		.attr("cy",0)
+		.attr("cx", prevMousePt[0])
+		.attr("cy", prevMousePt[1])
 		.attr("r",0);
 
 	//Create cursor morph
 	var cursorMorph = gSelection.append("circle")
 		.attr("class","bubble cursorMorph")
-		.attr("cx",0)
-		.attr("cy",0)
+		.attr("cx", prevMousePt[0])
+		.attr("cy", prevMousePt[1])
 		.attr("r",0);
 
 	//Redraw on mouse move
@@ -71,14 +75,10 @@ function BubbleCursor(selection) {
 		points
 			.each(function(d, i) {
 				var pt = d3.select(this);
-				var x = +pt.attr("x"),
-					y = +pt.attr("y"),
-					w = +pt.attr("width");
-					h = +pt.attr("height");
+				var x = +pt.attr("cx"),
+					y = +pt.attr("cy"),
+					r = +pt.attr("r");
 
-				var r = w;
-				x = x + w/2;
-				y = y + h/2;
 				var targetPt = [x, y];
 				var currDist = distance(mousePt,targetPt);
 				Dist.push(currDist);
@@ -150,10 +150,4 @@ function BubbleCursor(selection) {
 		targets = _;
 		return BubbleCursor;
 	};
-}
-
-//Helper function for obtaining containment and intersection distances
-function distance(ptA,ptB) {
-	var diff = [ptB[0]-ptA[0], ptB[1]-ptA[1]];
-	return Math.sqrt(diff[0] * diff[0] + diff[1] * diff[1]);
 }

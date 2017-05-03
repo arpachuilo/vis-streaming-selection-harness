@@ -1,6 +1,11 @@
 function FreezeTrajectory(selection, manualFreeze) {
 	//Hold previous mouse points for dynamic data
 	var prevMousePt = [0, 0];
+
+	if (window.width || window.height) {
+		prevMousePt = [window.width / 2, window.height / 2]
+	}
+
 	var extMousePt = [0, 0];
 
 	//Store previous mouse point positions
@@ -19,12 +24,13 @@ function FreezeTrajectory(selection, manualFreeze) {
 	//Controls the 'tail' of cursor
 	var i = 0;
 	var j = 0;
-	var threshold = 6;
+	var threshold = 4;
 
 	//Angle of 'flashlight'
 	var angle = 50;
 
 	//Controls accumulation behavior near freeze region
+	// NOTE: currently broken
 	var accumulations = false;
 	//If manual is true then freeze will only happen on shift
 	var manualFrz = (typeof manualFreeze === 'undefined') ? false : manualFreeze;
@@ -216,26 +222,20 @@ function FreezeTrajectory(selection, manualFreeze) {
 		points
 			.each(function(d, i) {
 				var pt = d3.select(this);
-				var x = +pt.attr("x"),
-						y = +pt.attr("y"),
-						w = +pt.attr("width"),
-						h = +pt.attr("height"),
-						rx = +pt.attr("rx"),
-						ry = +pt.attr("ry"),
+				var x = +pt.attr("cx"),
+						y = +pt.attr("cy"),
+						r = +pt.attr("r"),
 						fill = pt.attr("fill");
 
 				var ptD = [x, y];
 
 				if(det(ptA, ptB, ptD) <= 0 && det(ptA, ptC, ptD) >= 0 && d3.select(".i" + d[3] +".snapshot").empty()) {
 					pt.attr("id", "tagged");
-					gCopies.append("rect").datum(d[3])
+					gCopies.append("circle").datum(d)
 						.attr("class", d[2].replace("point", "") + "i" + d[3] + " snapshot")
-						.attr("width", w)
-						.attr("height", h)
-						.attr("x", x)
-						.attr("y", y)
-						.attr("rx", rx)
-						.attr("ry", ry)
+						.attr("cx", x)
+						.attr("cy", y)
+						.attr("r", r)
 						.attr("fill", fill);
 				} else if ((det(ptA, ptB, ptD) >= 0 || det(ptA, ptC, ptD) <= 0) && d3.select(".i" + d[3] +".snapshot").empty()) {
 					pt.attr("id", "untagged");
@@ -248,8 +248,8 @@ function FreezeTrajectory(selection, manualFreeze) {
 		d3.selectAll(".snapshot")
 			.each(function(d, i) {
 				var pt = d3.select(this);
-				var x = +pt.attr("x"),
-						y = +pt.attr("y");
+				var x = +pt.attr("cx"),
+						y = +pt.attr("cy");
 
 				var ptD = [x, y];
 
@@ -298,11 +298,6 @@ function  q(p0, p1, p2, p3, t) {
                   (p2 - p0) * t +
                   (2*p0 - 5*p1 + 4*p2 - p3) * t * t +
                   (3*p1 -p0 - 3 * p2 + p3) * t * t * t);
-}
-
-function distance(ptA, ptB) {
-	var diff = [ptB[0]-ptA[0], ptB[1]-ptA[1]];
-	return Math.sqrt(diff[0] * diff[0] + diff[1] * diff[1]);
 }
 
 //Simple determinant function

@@ -2,6 +2,10 @@ function FreezeAroundCursor(selection, manualFreeze) {
 	//Hold previous mouse point for dynamic data
 	var prevMousePt = [0, 0];
 
+	if (window.width || window.height) {
+		prevMousePt = [window.width / 2, window.height / 2]
+	}
+
 	//Name of svg element to grab for targets
 	var targets = ".point";
 
@@ -27,16 +31,16 @@ function FreezeAroundCursor(selection, manualFreeze) {
 	//Create freeze region visual
 	var freezeRegion = gSelection.append("circle")
 		.attr("class","freezeRegion")
-		.attr("cx", 0)
-		.attr("cy", 0)
+		.attr("cx", prevMousePt[0])
+		.attr("cy", prevMousePt[1])
 		.attr("r", frzRadius);
 
 	if(manualFrz) {
 		//Create manual freeze region visual if applicable
 		var manualFreezeRegion = gSelection.append("circle")
 			.attr("class","manual freezeRegion")
-			.attr("cx", 0)
-			.attr("cy", 0)
+			.attr("cx", prevMousePt[0])
+			.attr("cy", prevMousePt[1])
 			.attr("r", 0);
 	}
 
@@ -153,27 +157,21 @@ function FreezeAroundCursor(selection, manualFreeze) {
 		points
 			.each(function(d, i) {
 				var pt = d3.select(this);
-				var x = +pt.attr("x"),
-						y = +pt.attr("y"),
-						w = +pt.attr("width")
-						h = +pt.attr("height")
-						rx = +pt.attr("rx")
-						ry = +pt.attr("ry");
-				var r = Math.sqrt(w*w + h*h);
+				var x = +pt.attr("cx"),
+						y = +pt.attr("cy"),
+						r = +pt.attr("r");
+
 				var targetPt = [x, y];
 				var currDist = distance(mousePt,targetPt);
 
 				if (currDist <= frzRadius && d3.select(".i" + d[3] + ".snapshot").empty()) {
 					pt.attr("id", "tagged");
 
-					gCopies.append("rect").datum(d[3])
+					gCopies.append("circle").datum(d)
 						.attr("class", d[2].replace("point", "") + "i" + d[3] + " snapshot")
-						.attr("width", w)
-						.attr("height", h)
-						.attr("x", x)
-						.attr("y", y)
-						.attr("rx", rx)
-						.attr("ry", ry);
+						.attr("cx", x)
+						.attr("cy", y)
+						.attr("r", r)
 
 				} else if (currDist > frzRadius && d3.select(".i" + d[3] +".snapshot").empty()) {
 					pt.attr("id", "untagged");
@@ -186,14 +184,10 @@ function FreezeAroundCursor(selection, manualFreeze) {
 		d3.selectAll(".snapshot")
 			.each(function(d, i) {
 				var pt = d3.select(this)
-				var x = +pt.attr("x"),
-						y = +pt.attr("y"),
-						w = +pt.attr("width")
-						h = +pt.attr("height")
-						rx = +pt.attr("rx")
-						ry = +pt.attr("ry")
+				var x = +pt.attr("cx"),
+						y = +pt.attr("cy"),
+						r = +pt.attr("r")
 						fill = pt.attr("fill");
-				var r = Math.sqrt(w*w + h*h);
 
 				var targetPt = [x, y];
 
@@ -226,10 +220,4 @@ function FreezeAroundCursor(selection, manualFreeze) {
 	};
 
 	return FreezeAroundCursor;
-}
-
-//Helper function for obtaining containment and intersection distances
-function distance(ptA,ptB) {
-	var diff = [ptB[0]-ptA[0], ptB[1]-ptA[1]];
-	return Math.sqrt(diff[0] * diff[0] + diff[1] * diff[1]);
 }

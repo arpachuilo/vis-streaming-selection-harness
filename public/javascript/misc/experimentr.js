@@ -91,6 +91,15 @@ experimentr = function() {
       });
   }
 
+  experimentr.finish = function () {
+    d3.xhr('/finish')
+      .header("Content-Type", 'text/plain')
+      .post('finish', function (err, res) {
+        if (err) console.log(err)
+        else console.log(res)
+      })
+  }
+
   // Merges object o2 into o1.
   function merge(o1, o2) {
     for (var attr in o2) { o1[attr] = o2[attr]; }

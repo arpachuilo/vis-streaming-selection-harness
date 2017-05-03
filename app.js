@@ -6,6 +6,7 @@
 var express     = require('express')
   , http        = require('http')
   , redis       = require('redis')
+  , fs          = require('fs')
   , redisClient
   , port        = process.argv[2] || 8000
   , rport       = process.argv[3] || 6379
@@ -32,15 +33,21 @@ app.use(express.static(__dirname + '/public'))
 
 // If the study has finished, write the data to file
 app.post('/finish', function(req, res) {
-  fs.readFile('public/modules/blocked-workers.json', 'utf8', function(err,data) {
-    if (err) console.log(err);
+  console.log('User finished --- shifting sequence')
+  fs.readFile('public/data/sequence.json', 'utf8', function (err, data) {
+    if (err) console.log(err)
     var data = JSON.parse(data);
-    data.push(req.body.workerId);
+
+    data.sequence
+    var t = data.sequence.pop()
+    data.sequence.unshift(t)
+    data['worker_id'] += 1
+
     data = JSON.stringify(data);
-    fs.writeFile('public/modules/blocked-workers.json', data, function(err) {
-      if(err) console.log(err);
-    });
-  });
+    fs.writeFile('public/data/sequence.json', data, function (err) {
+      if (err) console.log(err)
+    })
+  })
 
   res.send(200)
 })

@@ -3,6 +3,10 @@ function NormalCursor(selection) {
 	//Variable to hold previous mouse points for dynamic data
 	var prevMousePt = [0,0];
 
+	if (window.width || window.height) {
+		prevMousePt = [window.width / 2, window.height / 2]
+	}
+
 	//Name of svg element to grab for targets
 	var targets = ".point";
 
@@ -41,14 +45,11 @@ function NormalCursor(selection) {
 		d3.selectAll(targets)
 			.each(function(d, i) {
 				var pt = d3.select(this);
-				var x = +pt.attr("x"),
-					y = +pt.attr("y"),
-					w = +pt.attr("width"),
-					h = +pt.attr("height");
+				var x = +pt.attr("cx"),
+					y = +pt.attr("cy"),
+					r = +pt.attr("r")
 
-				var r = w;
-
-				var ptA = [x + w/2, y + h/2];
+				var ptA = [x, y];
 
 				var dist = +distance(mousePt, ptA);
 				//NOTE: MAKE RADIUS
@@ -81,9 +82,4 @@ function NormalCursor(selection) {
 		tolerance = _;
 		return NormalCursor;
 	};
-}
-
-function distance(ptA,ptB) {
-	var diff = [ptB[0]-ptA[0], ptB[1]-ptA[1]];
-	return Math.sqrt(diff[0] * diff[0] + diff[1] * diff[1]);
 }

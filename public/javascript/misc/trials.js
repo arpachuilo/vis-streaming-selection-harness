@@ -22,14 +22,46 @@ var unique_id = 0;
 var practice_number = 0;
 var times_practiced = 0;
 
-var width = 900,
-    height = 360;
+// NOTE: Below are some useful variables to alter
+var width = 900;
+var height = 900;
+
+var showAnswers = true
+var responsePause = 1 // how many ms it takes before you can give a response (prevent accidental clicks)
+
+var numRequiredPracticeTrials = 1
+var firstPracticeLength = 60 * 1000
+
+var minTimePeriod = 5 //seconds
+var extraPossibleTime = 5 //seconds
+var practiceLengthFunc = function () { return Math.floor((Math.random() * extraPossibleTime) + minTimePeriod) * 1000 }
+var trialLengthFunc = function () { return Math.floor((Math.random() * extraPossibleTime) + minTimePeriod) * 1000 }
+
+var trialsPerCombination = 5
+
+// Will control perceived density
+var percentDistractors = 0.33 // 33% dots are blue
+var dotEveryMS = 50 // dots come up every 500ms
+
+// Will control perceived speed
+var dotDurationMin = 2000 // dots will take at least 2000ms to travel across
+var dotDurationRand = 5000 // dots may have up to an extra 5000ms
+
+var firstRedIndexMin = 1 // first red will at least be the starting at index 1
+var firstRedIndexRand = 5 // first red dot may be up to index 6
+
+// NOTE: 2d study variables
+// (2x - existence of varying speed) * ((3x - proxy method) * (3x - trail method) + (1 - no proxy method))
 
 var chart = StreamScatterPlot()
-    .x(function(d) { return +d.timeoffset; })
-    .y(function(d) { return +d.value; })
+    .x(function(d) { return +d.x; })
+    .y(function(d) { return +d.y; })
     .flag(function(d) { return d.flag; })
     .id(function(d) { return d.id; })
+    .toX(function(d) { return +d.toX; })
+    .toY(function(d) { return +d.toY; })
+    .duration(function(d) { return +d.duration; })
+    .entry(function(d) { return +d.entry; })
     .width(width)
     .height(height)
     .allowZoom(false)
@@ -47,11 +79,9 @@ var first_practice = false;
 
 var experiment_sequence = [];
 var trail = ["none", "ghost", "trail"];
-var speed_density = [
-    {"speed": "low", "density": "low"},
-    {"speed": "high", "density": "low"},
-    {"speed": "low", "density": "high"},
-    {"speed": "high", "density": "high"},
+var speeds = [
+    {"speed": "vary"},
+    {"speed": "constant"}
 ];
 
 function shuffle(o){
@@ -61,8 +91,7 @@ function shuffle(o){
 
 //Generate trial sequence
 d3.json("data/sequence.json", function(error, data) {
-    var sequence = [];
-    sequence = data.sequence;
+    var sequence = data.sequence;
 
     var n = 0;
     //4X Technique
@@ -76,16 +105,14 @@ d3.json("data/sequence.json", function(error, data) {
                 trailType = "none";
                 j = 4;
             }
-            //2X Speed by 2X Density
-            shuffle(speed_density);
-            for (k = 0; k < 4; k++) {
-                var speed = speed_density[k].speed;
-                var density = speed_density[k].density;
+            // 2X Speed
+            shuffle(speeds);
+            for (k = 0; k < 2; k++) {
+                var speed = speeds[k].speed;
                 experiment_sequence[n] = {};
                 experiment_sequence[n].freezeType = freezeType;
                 experiment_sequence[n].trailType = trailType;
                 experiment_sequence[n].speed = speed;
-                experiment_sequence[n].density = density;
                 n += 1;
             }
         }
@@ -95,22 +122,71 @@ d3.json("data/sequence.json", function(error, data) {
     loadNextTrial();
 });
 
-//Load JSON file
-function load(file, callback) {
-    d3.json("data/" + file, function(error, data) {
-        if (error) {
-            console.log(error);
-        } else {
-            console.log(data);
-        }
+// Make datasets
+function load(size, speed, callback) {
+  dataset = []
 
-        numTrials = data.length;
-        dataset = data;
+  // Number of sets we want
+  for (var i = 0; i < size; i++) {
+    dataset.push([])
 
-        if (typeof callback == "function") {
-            callback();
-        }
-    });
+    // Size of each set
+    var entryTime = 0
+    var firstPrimary = Math.round(Math.random() * firstRedIndexRand) + firstRedIndexMin
+    var totalNumDots = ((1 + minTimePeriod + extraPossibleTime) * 1000) / dotEveryMS
+    for (var j = 0; j < totalNumDots; j++) {
+      var d = {}
+      if (j === firstPrimary) {
+        d.flag = 'primary point'
+      } else if (Math.random() < percentDistractors){
+        d.flag = 'secondary point'
+      } else {
+        d.flag = 'point'
+      }
+
+      d.id = j
+
+      // Determine which wall to start on
+      var side = Math.round(Math.random() * 3)
+      if (side === 0) { // top
+        d.y = 0
+        d.x = Math.random() * width
+        d.toY = height
+        d.toX = Math.random() * width
+      } else if (side === 1) { // left
+        d.x = 0
+        d.y = Math.random() * height
+        d.toX = width
+        d.toY = Math.random() * height
+      } else if (side === 2) { // bottom
+        d.y = height
+        d.x = Math.random() * width
+        d.toY = 0
+        d.toX = Math.random() * width
+      } else { // right
+        d.x = width
+        d.y = Math.random() * height
+        d.toX = 0
+        d.toY = Math.random() * height
+      }
+
+      d.entry = entryTime
+      if (speed === 'vary') {
+        d.duration = Math.random() * dotDurationRand + dotDurationMin;
+      } else {
+        d.duration = dotDurationMin
+      }
+      entryTime += dotEveryMS
+
+      dataset[i].push(d)
+    }
+  }
+
+  numTrials = dataset.length
+
+  if (typeof callback == "function") {
+      callback();
+  }
 }
 
 //Create chart
@@ -120,32 +196,18 @@ function createChart(_speed, _trail) {
       num_load =  Math.floor((Math.random() * 14));
   }
 
-  //Add offset to current time to simulate real time data
-  var now = +new Date() + 1000;
-  dataset[num_load].forEach(function (d) {
-    d.timeoffset = (now - (20 * 1000)) + d.timeoffset * 1000;
-    d.timeoffset = +d.timeoffset;
-    d.value = +d.value;
-    d.primary = d.primary;
-    d.secondary = d3.secondary;
-  });
-
-
   //Create chart with specified data
   var stream = d3.select("#trialsChart")
     .datum(dataset[num_load])
     .call(chart);
 
-  if(first_practice) {
-      StreamScatterPlot.practicePeriod();
-      first_practice = false;
-  }
-
-  //Set speed modifier
-  if (_speed === "high") {
-    StreamScatterPlot.setClockDrift(25);
+  if (first_practice) {
+    StreamScatterPlot.setClickPeriod(firstPracticeLength);
+    first_practice = false;
+  } else if (practice) {
+    StreamScatterPlot.setClickPeriod(practiceLengthFunc());
   } else {
-    StreamScatterPlot.setClockDrift(0);
+    StreamScatterPlot.setClickPeriod(trialLengthFunc());
   }
 
   //Set trail modifier
@@ -252,21 +314,28 @@ function createGo() {
         .style("fill", "none")
         .style("stroke-width", "1px");
 
+    var r = 100
     var g = svg.append("g").attr("class", "goButton");
     var goCircle = g.append("circle")
         .attr("cx", width/2)
         .attr("cy", height/2)
-        .attr("r", 50)
+        .attr("r", r)
         .style("fill", "#8BC34A");
 
+    var _freeze = experiment_sequence[experiment_number].freezeType;
+    var _trail= experiment_sequence[experiment_number].trailType;
+
+    var t = (previousFrz != _freeze || previousTrail != _trail) ? 'DONE' : 'GO'
     var goText = g.append("text")
-        .attr("x", width/2 - 40)
-        .attr("y", height/2 + 20)
+        .attr("x", width/2)
+        .attr("y", height/2)
+        .attr("dy", r/2 - 25)
         .style("font-family", "sans-serif")
         .style("font-size", "50px")
         .style("fill", "#F4F4F4")
         .style("cursor", "default")
-        .text("GO");
+        .style('text-anchor', 'middle')
+        .text(t);
 
     g.on("click.go", function() {
         g.on("click.go", null);
@@ -277,7 +346,7 @@ function createGo() {
 }
 
 //Loads up secondary task question
-function createQuestion(err, time, dis, click_period, dots_c, dots_m, nums_freezed, nums_cleared, errors_air) {
+function createQuestion(err, time, dis, click_period, dots_c, dots_m, nums_freezed, nums_cleared, errors_air, dots_array) {
     var svg = d3.select("#trialsChart").append("svg")
         .attr("id", "question")
         .attr("width", width)
@@ -296,7 +365,6 @@ function createQuestion(err, time, dis, click_period, dots_c, dots_m, nums_freez
     var g = svg.append("g").attr("class", "questionNumpad");
     var numpad = g.selectAll(".numpad").data(numbers);
     var numpadText = g.selectAll(".numpadText").data(numbers);
-
 
     numpad.enter().append("rect")
         .attr("class", "numpad")
@@ -330,7 +398,7 @@ function createQuestion(err, time, dis, click_period, dots_c, dots_m, nums_freez
             .on("click.numpad", click_handler);
         numpadText
             .on("click.numpadText", click_handler);
-    }, 1000);
+    }, responsePause);
 
     function click_handler() {
         var ans = d3.select(this).data();
@@ -340,19 +408,18 @@ function createQuestion(err, time, dis, click_period, dots_c, dots_m, nums_freez
         svg.remove();
         d3.select("#trialsChart").html("");
 
-        if (practice) {
-            // d3.select("#question_info").html(
-            //     "<b>Distractors that were on screen: </b>" + dis +
-            //     "<b><br>Your answer: </b>" + ans[0] +
-            //     "<b><br>Number of dots you clicked: </b>" + dots_c
-            // );
+        if (showAnswers) {
+            d3.select("#question_info").html(
+                "<b>Distractors that were on screen: </b>" + dis +
+                "<b><br>Your answer: </b>" + ans[0] +
+                "<b><br>Number of dots you clicked: </b>" + dots_c
+            );
         }
 
+        addTrialData(err, time, dis, ans[0], click_period, dots_c, dots_m, nums_freezed, nums_cleared, errors_air, dots_array);
         if (experiment_number + 1 == experiment_length && trialNumber + 1 >= numTrials) {
-            addTrialData(err, time, dis, ans[0], click_period, dots_c, dots_m, nums_freezed, nums_cleared, errors_air);
             goToNext();
         } else {
-            addTrialData(err, time, dis, ans[0], click_period, dots_c, dots_m, nums_freezed, nums_cleared, errors_air);
             createGo();
         }
     }
@@ -465,7 +532,6 @@ function loadNextTrial() {
     var _freeze = experiment_sequence[experiment_number].freezeType;
     var _trail = experiment_sequence[experiment_number].trailType;
     var _speed = experiment_sequence[experiment_number].speed;
-    var _density = experiment_sequence[experiment_number].density;
 
     if(!practice) {
         d3.select("#trainInfo").html("");
@@ -485,15 +551,14 @@ function loadNextTrial() {
         times_practiced = 0;
         experimentr.startTimer('practice_' + _freeze + "_" + _trail);
         first_practice = true;
-        practice_number = Math.floor((Math.random() * 3))
+        practice_number = Math.floor((Math.random() * (speeds.length - 1)))
         createPractice()
     }
 
     if (practice) {
-        _practice_speed = speed_density[practice_number].speed;
-        _practice_density = speed_density[practice_number].density;
+        _practice_speed = speeds[practice_number].speed;
         startPractice(function() {
-            load("practice_" + _practice_density + "_density.json", function() {
+            load(15, _practice_speed, function() {
                 createChart(_practice_speed, _trail);
                 setSelectors("normal", _freeze);
             });
@@ -501,22 +566,17 @@ function loadNextTrial() {
         practice_number += 1;
         times_practiced += 1;
 
-        if (times_practiced > 5) {
+        if (times_practiced > numRequiredPracticeTrials) {
             d3.select("#train_button")
                 .attr("disabled", null)
                 .style("display", "");
         }
-        if (practice_number > 3)
+        if (practice_number > speeds.length - 1)
             practice_number = 0;
     } else {
-        //Do some checking to load new file only when density changes or trial number is too high
         if (trialNumber == 0) {
-            setNumber = Math.floor((Math.random() * 10) + 1)
-        }
-        stream_file = "stream_" + _density + "_density_" + setNumber + ".json";
-
-        if (trialNumber == 0) {
-            load(stream_file, function() {
+          console.log('loaded file')
+            load(trialsPerCombination, _speed, function() {
                 createChart(_speed, _trail);
                 setSelectors("normal", _freeze);
             });
@@ -527,29 +587,29 @@ function loadNextTrial() {
     }
 }
 
-function addTrialData(err, time, dis, dis_ans, click_period, dots_c, dots_m, nums_freezed, nums_cleared, errors_air) {
+function addTrialData(err, time, dis, dis_ans, click_period, dots_c, dots_m, nums_freezed, nums_cleared, errors_air, dots_array) {
     if (!practice) {
 
         var _freeze = experiment_sequence[experiment_number].freezeType;
         var _trail = experiment_sequence[experiment_number].trailType;
         var _speed = experiment_sequence[experiment_number].speed;
-        var _density = experiment_sequence[experiment_number].density;
 
-        var t_id = _freeze + "_" + _trail + "_" + _speed + "_" + _density + "_" + trialNumber;
+        var t_id = _freeze + "_" + _trail + "_" + _speed + "_" + trialNumber;
 
-        var id_glob = "_global_id_" + t_id;
-        var id_uniq = "_unique_id_" + t_id;
-        var id_file = "_file_" + t_id;
-        var id_err = "_errors_" + t_id;
-        var id_err_air = "_errors_clicked_nothing_" + t_id;
-        var id_time = "_time_" + t_id;
-        var id_dis = "_num_distractors_" + t_id;
-        var id_dis_ans = "_distractors_answer_" + t_id;
-        var id_dots_c = "_dots_clicked_" + t_id;
-        var id_dots_m = "_dots_missed_" + t_id;
-        var id_click_period = "_click_time_period_" + t_id;
-        var id_nums_freeze = "_freezes_usesd_" + t_id;
-        var id_nums_cleared = "_clears_usesd_" + t_id;
+        var id_glob = "global_id_" + t_id;
+        var id_uniq = "unique_id_" + t_id;
+        var id_file = "file_" + t_id;
+        var id_err = "errors_" + t_id;
+        var id_err_air = "errors_clicked_nothing_" + t_id;
+        var id_time = "time_" + t_id;
+        var id_dis = "num_distractors_" + t_id;
+        var id_dis_ans = "distractors_answer_" + t_id;
+        var id_dots_c = "dots_clicked_" + t_id;
+        var id_dots_m = "dots_missed_" + t_id;
+        var id_click_period = "click_time_period_" + t_id;
+        var id_nums_freeze = "freezes_usesd_" + t_id;
+        var id_nums_cleared = "clears_usesd_" + t_id;
+        var id_dots_clicked_info = "detailed_click_info_" + t_id;
 
         data[id_glob] = global_trial_id;
         data[id_uniq] = unique_id;
@@ -564,10 +624,11 @@ function addTrialData(err, time, dis, dis_ans, click_period, dots_c, dots_m, num
         data[id_click_period] = click_period;
         data[id_nums_freeze] = nums_freezed;
         data[id_nums_cleared] = nums_cleared;
+        data[id_dots_clicked_info] = dots_array
 
         global_trial_id += 1;
         trialNumber += 1;
-        // console.log(JSON.stringify(data, null, "\t"));
+
         if (trialNumber >= numTrials) {
             trialNumber = 0;
             experiment_number += 1;

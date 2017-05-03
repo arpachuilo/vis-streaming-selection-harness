@@ -19,23 +19,21 @@ function TrailDrawer(selection) {
 	TrailDrawer.redraw = function() {
 		d3.selectAll("#tagged").each(function(d, i) {
 			var snap = d3.select(this);
-			var snapX = +snap.attr("x");
-			var snapY = +snap.attr("y");
-			var snapWidth = +snap.attr("width");
-			var snapHeight = +snap.attr("height");
+			var snapX = +snap.attr("cx");
+			var snapY = +snap.attr("cy");
+			var snapR = + snap.attr("r");
 			var cls = snap.attr("class").replace("point", "trail");
 			var uniqueID = d[3];
 			if (!d3.select(".i" + uniqueID + ".snapshot").empty()) {
 				var tagged = d3.select(".i" + uniqueID + ".snapshot");
-				var taggedX = +tagged.attr("x");
-				var taggedY = +tagged.attr("y");
-				var taggedWidth = +tagged.attr("width");
-				var taggedHeight = +tagged.attr("height");
+				var taggedX = +tagged.attr("cx");
+				var taggedY = +tagged.attr("cy");
+				var taggedR = +tagged.attr("r");
 
 				if (d3.select(".i" + uniqueID + ".trail").empty()) {
 					TrailDrawer.createTrail(uniqueID, cls);
 				} else {
-					TrailDrawer.updateTrail([snapX + snapWidth/2, snapY + snapHeight/2], [taggedX + taggedWidth/2, taggedY + taggedHeight/2], uniqueID, cls);
+					TrailDrawer.updateTrail([snapX, snapY], [taggedX, taggedY], uniqueID, cls);
 				}
 
 				if (!d3.select(".i" + uniqueID + ".snapshot.target").empty()) {
