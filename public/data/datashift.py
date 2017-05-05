@@ -19,8 +19,7 @@ def main():
     new_sequence = list(new_sequence)
 
     new_id = info["worker_id"]
-    new_id = int(new_id, 16) + 1
-    new_id = format(new_id, 'x')
+    new_id = info["worker_id"] + 1
 
     try:
         with open('sequence.json', 'w') as f:

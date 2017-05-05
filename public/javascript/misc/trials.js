@@ -33,8 +33,8 @@ var responsePause = 1000 // how many ms it takes before you can give a response 
 var numRequiredPracticeTrials = 1 //*** how many times MUST they practice? (not optional)
 var firstPracticeLength = 10 * 1000 //*** make users first practice longer
 
-var minTimePeriod = 5 //*** (ms) min time limit for clicking during trials seconds NOTE: this should be greater or equal to dotDurationMin
-var extraPossibleTime = 5 //*** (ms) amount of extra possible time for clicking
+var minTimePeriod = 5000 //*** (ms) min time limit for clicking during trials seconds NOTE: this should be greater or equal to dotDurationMin
+var extraPossibleTime = 5000 //*** (ms) amount of extra possible time for clicking
 var practiceLengthFunc = function () { return ((Math.random() * extraPossibleTime) + minTimePeriod) }
 var trialLengthFunc = function () { return ((Math.random() * extraPossibleTime) + minTimePeriod) }
 

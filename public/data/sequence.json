@@ -1,1 +1,9 @@
-{"sequence":["FreezeWholeScreen","FreezeTrajectory","none","FreezeAroundCursor"],"worker_id":6}
+{
+    "sequence": [
+        "FreezeTrajectory", 
+        "none", 
+        "FreezeAroundCursor", 
+        "FreezeWholeScreen"
+    ], 
+    "worker_id": 9
+}
