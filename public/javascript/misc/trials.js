@@ -1,3 +1,4 @@
+// NOTE: Any useful variables to alter will have a comment starting with ***
 //Hold data collected
 var data = {};
 var worker_id = experimentr.workerId();
@@ -22,35 +23,39 @@ var unique_id = 0;
 var practice_number = 0;
 var times_practiced = 0;
 
-// NOTE: Below are some useful variables to alter
-var width = 900;
-var height = 900;
+// NOTE: Any useful variables to alter will have a comment starting with ***
+var width = 900; //***
+var height = 900; //*** these control size of click area
 
-var showAnswers = true
-var responsePause = 1 // how many ms it takes before you can give a response (prevent accidental clicks)
+var showAnswers = true //*** useful debug
+var responsePause = 1000 // how many ms it takes before you can give a response (prevent accidental clicks)
 
-var numRequiredPracticeTrials = 1
-var firstPracticeLength = 10 * 1000
+var numRequiredPracticeTrials = 1 //*** how many times MUST they practice? (not optional)
+var firstPracticeLength = 10 * 1000 //*** make users first practice longer
 
-var minTimePeriod = 5 //seconds
-var extraPossibleTime = 5 //seconds
-var practiceLengthFunc = function () { return ((Math.random() * extraPossibleTime) + minTimePeriod) * 1000 }
-var trialLengthFunc = function () { return ((Math.random() * extraPossibleTime) + minTimePeriod) * 1000 }
+var minTimePeriod = 5 //*** (ms) min time limit for clicking during trials seconds NOTE: this should be greater or equal to dotDurationMin
+var extraPossibleTime = 5 //*** (ms) amount of extra possible time for clicking
+var practiceLengthFunc = function () { return ((Math.random() * extraPossibleTime) + minTimePeriod) }
+var trialLengthFunc = function () { return ((Math.random() * extraPossibleTime) + minTimePeriod) }
 
 var trialsPerCombination = 5
 
 // Will control perceived density
 // var percentDistractors = 0.1 // 33% dots are blue
-var dotEveryMS = 50 // dots come up every XXXms
+// NOTE: this will control max number of dots via dotDurationMin / dotEveryMS = fully saturated (max) number of dots
+// NOTE: this max can vary when the speed varies --- measures were taken to keep this from effecting number of blue dots
+var dotEveryMS = 50 //*** dots come up every XXXms
 
 // Will control perceived speed
-var dotDurationMin = 5000 // dots will take at least XXXms to travel across
-var dotDurationRand = 2000 // dots may have up to XXXms subtract from their duration
+// These control how long it takes a dot to move across the vis
+var dotDurationMin = 5000 //*** dots will take at least XXXms to travel across NOTE: should be as low as minTimePeriod
+var dotDurationRand = 2000 //*** dots may have up to XXXms subtracted from their duration
 
-var numBlueOnScreenRange = [5, 13]
+var numBlueOnScreenRange = [5, 13] //*** controls the number of blue dots on the screen NOTE: will saturate once reaches dotDurationMin
 
-var firstRedIndexMin = 1 // first red will at least be the starting at index X
-var firstRedIndexRand = 5 // first red dot may be up to index X
+// Controls when the first red dot should appear by index
+var firstRedIndexMin = 1 //*** first red will at least be the starting at index X
+var firstRedIndexRand = 3 //*** first red dot may be up to index X
 
 // NOTE: 2d study variables
 // (2x - existence of varying speed) * ((3x - proxy method) * (3x - trail method) + (1 - no proxy method))
