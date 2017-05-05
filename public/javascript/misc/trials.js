@@ -30,25 +30,27 @@ var showAnswers = true
 var responsePause = 1 // how many ms it takes before you can give a response (prevent accidental clicks)
 
 var numRequiredPracticeTrials = 1
-var firstPracticeLength = 60 * 1000
+var firstPracticeLength = 10 * 1000
 
 var minTimePeriod = 5 //seconds
 var extraPossibleTime = 5 //seconds
-var practiceLengthFunc = function () { return Math.floor((Math.random() * extraPossibleTime) + minTimePeriod) * 1000 }
-var trialLengthFunc = function () { return Math.floor((Math.random() * extraPossibleTime) + minTimePeriod) * 1000 }
+var practiceLengthFunc = function () { return ((Math.random() * extraPossibleTime) + minTimePeriod) * 1000 }
+var trialLengthFunc = function () { return ((Math.random() * extraPossibleTime) + minTimePeriod) * 1000 }
 
 var trialsPerCombination = 5
 
 // Will control perceived density
-var percentDistractors = 0.33 // 33% dots are blue
-var dotEveryMS = 50 // dots come up every 500ms
+// var percentDistractors = 0.1 // 33% dots are blue
+var dotEveryMS = 50 // dots come up every XXXms
 
 // Will control perceived speed
-var dotDurationMin = 2000 // dots will take at least 2000ms to travel across
-var dotDurationRand = 5000 // dots may have up to an extra 5000ms
+var dotDurationMin = 5000 // dots will take at least XXXms to travel across
+var dotDurationRand = 2000 // dots may have up to XXXms subtract from their duration
 
-var firstRedIndexMin = 1 // first red will at least be the starting at index 1
-var firstRedIndexRand = 5 // first red dot may be up to index 6
+var numBlueOnScreenRange = [5, 13]
+
+var firstRedIndexMin = 1 // first red will at least be the starting at index X
+var firstRedIndexRand = 5 // first red dot may be up to index X
 
 // NOTE: 2d study variables
 // (2x - existence of varying speed) * ((3x - proxy method) * (3x - trail method) + (1 - no proxy method))
@@ -134,15 +136,21 @@ function load(size, speed, callback) {
     var entryTime = 0
     var firstPrimary = Math.round(Math.random() * firstRedIndexRand) + firstRedIndexMin
     var totalNumDots = ((1 + minTimePeriod + extraPossibleTime) * 1000) / dotEveryMS
+    var blueTimer = 0
+    var blueEveryMS = Math.floor(dotDurationMin / (Math.floor(Math.random() * (numBlueOnScreenRange[1] - numBlueOnScreenRange[0])) + numBlueOnScreenRange[0]))
     for (var j = 0; j < totalNumDots; j++) {
+
       var d = {}
       if (j === firstPrimary) {
         d.flag = 'primary point'
-      } else if (Math.random() < percentDistractors){
+      } else if (blueTimer >= blueEveryMS) {
+        blueTimer = 0
         d.flag = 'secondary point'
       } else {
         d.flag = 'point'
       }
+
+      blueTimer += dotEveryMS
 
       d.id = j
 
@@ -171,8 +179,8 @@ function load(size, speed, callback) {
       }
 
       d.entry = entryTime
-      if (speed === 'vary') {
-        d.duration = Math.random() * dotDurationRand + dotDurationMin;
+      if (speed === 'vary' && d.flag !== 'secondary point') {
+        d.duration = dotDurationMin - Math.random() * dotDurationRand;
       } else {
         d.duration = dotDurationMin
       }

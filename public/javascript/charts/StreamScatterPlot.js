@@ -451,6 +451,7 @@ function StreamScatterPlot() {
 		var subset = dataset.filter(function(d, i) {
 			return d[5] < elapsed  && elapsed - d[5] < d[4]
 		})
+		console.log(subset.length)
 		points = gData.selectAll(".point").data(subset, function(d, i) { return d[3]; });
 
 		//Update
