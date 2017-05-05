@@ -119,7 +119,7 @@ d3.json("data/sequence.json", function(error, data) {
             }
         }
     }
-    console.log(experiment_sequence);
+
     experiment_length = experiment_sequence.length;
     loadNextTrial();
 });
@@ -583,7 +583,6 @@ function loadNextTrial() {
             practice_number = 0;
     } else {
         if (trialNumber == 0) {
-          console.log('loaded file')
             load(trialsPerCombination, _speed, function() {
                 createChart(_speed, _trail);
                 setSelectors("normal", _freeze);
