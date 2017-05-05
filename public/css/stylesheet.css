@@ -1,17 +1,11 @@
-#trialsChart {
-  /*position: fixed;*/
-  /*top: 50%;*/
-  /*left: 50%;*/
-  /* bring your own prefixes */
-  /*transform: translate(-50%, 0%);*/
+#trialsChart svg {
+  margin: auto;
+  display: block;
 }
 
-#trialInfo {
-
-}
-
-#trainInfo {
-
+.center {
+  margin: 0 auto;
+  width: 50%;
 }
 
 .axis path,
