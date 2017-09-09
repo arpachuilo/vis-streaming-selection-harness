@@ -10,11 +10,26 @@ This is based on [experimentr](https://github.com/codementum/experimentr), a hos
 * Install [python 2.7](https://www.python.org/download/releases/2.7)
 * Install node modules:  `npm install`
 
-## Usage
+## Usage [linux/mac]
 
 Start redis:
 
     redis-server redis.conf
+
+Run the server:
+
+    node app.js
+
+Then access the page at [localhost:8000](http://localhost:8000).
+
+## Usage [windows]
+
+You are going need to a windows version of redis. Here is a direct link to a working one.
+https://github.com/MicrosoftArchive/redis/releases/download/win-3.0.504/Redis-x64-3.0.504.zip
+
+Start redis:
+
+    run redis-server.exe
 
 Run the server:
 
@@ -55,7 +70,7 @@ Tell them that once they have form filled out that they can hit next, and that i
 Instructions Page
 1. Ensure they understand the instructions.
 2. Tell them they will understand this more once they get to practice.
-3. Make sure they understand ' how many blue dots you saw on the screen right before time was up' part. 
+3. Make sure they understand ' how many blue dots you saw on the screen right before time was up' part.
 	This basically means how many blues dots were on the last frame of the visualization, not the number of blue dots
 	over the lifetime of the visualization.
 4. Instruct them to click "I'm Ready" once they are ready.
@@ -81,4 +96,3 @@ Post Survey
 
 After Testing
 1. Consult analysis/readme.md and public/data/readme.md
-
