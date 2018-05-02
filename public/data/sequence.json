@@ -1,9 +1,4 @@
 {
-    "sequence": [
-        "FreezeTrajectory", 
-        "none", 
-        "FreezeAroundCursor", 
-        "FreezeWholeScreen"
-    ], 
+    "sequence": ["none", "FreezeTrajectory", "FreezeWholeScreen", "none"],
     "worker_id": 9
 }

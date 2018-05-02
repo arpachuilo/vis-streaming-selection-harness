@@ -58,6 +58,7 @@
 	stroke-opacity: 0.5;
 }
 
+.dupe.target,
 .point.target,
 .snapshot.target {
 	/*stroke: #8BC34A;*/
